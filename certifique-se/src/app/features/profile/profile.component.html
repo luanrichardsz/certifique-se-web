@@ -1,0 +1,194 @@
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+  <!-- Header -->
+  <div>
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Meu Perfil</h1>
+    <p class="text-sm text-slate-400 mt-1">Gerencie suas informações pessoais, configurações e segurança da conta</p>
+  </div>
+
+  <!-- Profile Card & Public URL -->
+  <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 sm:p-8 backdrop-blur-xl space-y-6">
+    <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5">
+      <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-black text-2xl flex items-center justify-center shadow-xl shadow-blue-500/20 flex-shrink-0">
+        {{ userInitials }}
+      </div>
+      <div class="text-center sm:text-left flex-1">
+        <h2 class="text-xl font-bold text-white">{{ currentUser()?.nomeUsuario }}</h2>
+        <p class="text-sm text-blue-400 font-medium">{{ currentUser()?.headline || "Sem título profissional definido" }}</p>
+        <p class="text-xs text-slate-400 mt-1">{{ currentUser()?.email }}</p>
+
+        @if (currentUser()?.username) {
+          <div class="mt-3 flex flex-wrap items-center justify-center sm:justify-start gap-2">
+            <span class="text-xs text-slate-500 font-mono">Link público:</span>
+            <a routerLink="/u/{{ currentUser()?.username }}" target="_blank" class="text-xs font-mono font-semibold text-indigo-400 hover:text-indigo-300 underline">
+              {{ publicProfileUrl }}
+            </a>
+            <button (click)="copyLink()" class="px-2 py-0.5 rounded text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors">
+              {{ copied ? "Copiado!" : "Copiar" }}
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Profile Form -->
+  <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 sm:p-8 backdrop-blur-xl space-y-6">
+    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+      Informações do Perfil
+    </h2>
+
+    @if (profileSuccess) {
+      <div class="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-sm text-emerald-400">
+        {{ profileSuccess }}
+      </div>
+    }
+
+    @if (profileError) {
+      <div class="rounded-xl bg-red-500/10 border border-red-500/20 p-4 text-sm text-red-400">
+        {{ profileError }}
+      </div>
+    }
+
+    <form [formGroup]="profileForm" (ngSubmit)="onSaveProfile()" class="space-y-5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div>
+          <label for="nomeUsuario" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Nome Completo *</label>
+          <input id="nomeUsuario" type="text" formControlName="nomeUsuario"
+                 class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <div>
+          <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">E-mail *</label>
+          <input id="email" type="email" formControlName="email"
+                 class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <div>
+          <label for="username" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Username do Portfólio</label>
+          <div class="relative">
+            <span class="absolute left-3.5 top-3.5 text-slate-500 text-sm font-mono">&#64;</span>
+            <input id="username" type="text" formControlName="username"
+                   class="w-full pl-9 pr-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+
+        <div>
+          <label for="headline" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Título / Cargo Profissional</label>
+          <input id="headline" type="text" formControlName="headline" placeholder="ex: Desenvolvedor Full Stack"
+                 class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <div class="sm:col-span-2">
+          <label for="biografia" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Biografia / Apresentação</label>
+          <textarea id="biografia" formControlName="biografia" rows="3" placeholder="Fale um pouco sobre sua trajetória, formação e objetivos..."
+                    class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+        </div>
+      </div>
+
+      <!-- Public profile visibility toggle -->
+      <div class="pt-4 border-t border-slate-800 flex items-center justify-between">
+        <div>
+          <p class="text-sm font-semibold text-white">Ativar Portfólio Público</p>
+          <p class="text-xs text-slate-400 mt-0.5">Se desativado, o link /u/{{ currentUser()?.username }} não será visível para terceiros.</p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" formControlName="perfilPublico" class="sr-only peer">
+          <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+        </label>
+      </div>
+
+      <div class="flex justify-end pt-2">
+        <button type="submit" [disabled]="isSavingProfile"
+                class="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 transition-all disabled:opacity-50">
+          {{ isSavingProfile ? "Salvando..." : "Salvar Dados do Perfil" }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Change Password Form -->
+  <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 sm:p-8 backdrop-blur-xl space-y-6">
+    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+      Alterar Senha
+    </h2>
+
+    @if (passwordSuccess) {
+      <div class="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-sm text-emerald-400">
+        {{ passwordSuccess }}
+      </div>
+    }
+
+    @if (passwordError) {
+      <div class="rounded-xl bg-red-500/10 border border-red-500/20 p-4 text-sm text-red-400">
+        {{ passwordError }}
+      </div>
+    }
+
+    <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()" class="space-y-4">
+      <div>
+        <label for="senhaAtual" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Senha Atual</label>
+        <input id="senhaAtual" type="password" formControlName="senhaAtual" placeholder="••••••••"
+               class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label for="novaSenha" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Nova Senha</label>
+          <input id="novaSenha" type="password" formControlName="novaSenha" placeholder="Mínimo de 6 caracteres"
+                 class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <div>
+          <label for="confirmarSenha" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Confirmar Nova Senha</label>
+          <input id="confirmarSenha" type="password" formControlName="confirmarSenha" placeholder="Repita a nova senha"
+                 class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+      </div>
+
+      <div class="flex justify-end pt-2">
+        <button type="submit" [disabled]="isChangingPassword"
+                class="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-500 transition-all disabled:opacity-50">
+          {{ isChangingPassword ? "Alterando..." : "Alterar Senha" }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Danger Zone: Delete Account -->
+  <div class="rounded-3xl bg-red-950/20 border border-red-900/40 p-6 sm:p-8 backdrop-blur-xl space-y-4">
+    <h2 class="text-lg font-bold text-red-400">Zona de Perigo</h2>
+    <p class="text-sm text-slate-400">
+      Ao excluir sua conta, todos os seus certificados, imagens e dados serão permanentemente apagados dos nossos servidores.
+    </p>
+
+    @if (!showDeleteConfirm) {
+      <button (click)="showDeleteConfirm = true"
+              class="px-4 py-2.5 rounded-xl text-xs font-bold text-red-400 hover:text-white hover:bg-red-600/80 border border-red-500/30 transition-all">
+        Quero excluir minha conta
+      </button>
+    } @else {
+      <div class="p-4 rounded-2xl bg-slate-950/80 border border-red-900/60 space-y-3">
+        <p class="text-xs text-red-400 font-semibold">Confirme sua senha para prosseguir com a exclusão:</p>
+        
+        @if (deleteError) {
+          <p class="text-xs text-red-400">{{ deleteError }}</p>
+        }
+
+        <form [formGroup]="deleteForm" (ngSubmit)="onDeleteAccount()" class="flex flex-col sm:flex-row gap-3">
+          <input type="password" formControlName="senhaAtual" placeholder="Digite sua senha atual"
+                 class="flex-1 px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-white text-xs focus:outline-none focus:ring-2 focus:ring-red-500" />
+          <button type="submit" [disabled]="isDeletingAccount"
+                  class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-500 transition-all disabled:opacity-50">
+            {{ isDeletingAccount ? "Excluindo..." : "Confirmar Exclusão Definitiva" }}
+          </button>
+          <button type="button" (click)="showDeleteConfirm = false"
+                  class="px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">
+            Cancelar
+          </button>
+        </form>
+      </div>
+    }
+  </div>
+</div>

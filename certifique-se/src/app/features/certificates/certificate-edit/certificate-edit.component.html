@@ -1,0 +1,158 @@
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mb-6 flex items-center justify-between">
+    <div>
+      <a routerLink="/certificados/{{ hashCertificado }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors mb-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m15 18-6-6 6-6"/>
+        </svg>
+        <span>Voltar aos Detalhes</span>
+      </a>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Editar Certificado</h1>
+      <p class="text-sm text-slate-400 mt-1">Atualize informações, visibilidade ou link do comprovante</p>
+    </div>
+  </div>
+
+  @if (errorMessage) {
+    <div class="mb-6 rounded-2xl bg-red-500/10 border border-red-500/20 p-4 text-sm text-red-400">
+      {{ errorMessage }}
+    </div>
+  }
+
+  @if (isLoading) {
+    <div class="p-12 text-center text-slate-400 animate-pulse">Carregando dados do certificado...</div>
+  } @else {
+    <form [formGroup]="certificateForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 sm:p-8 backdrop-blur-xl space-y-6">
+        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          Informações Principais
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="md:col-span-2">
+            <label for="nome" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Nome do Curso / Certificação *</label>
+            <input id="nome" type="text" formControlName="nome"
+                   class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+
+          <div>
+            <label for="empresa" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Instituição Emissora *</label>
+            <input id="empresa" type="text" formControlName="empresa"
+                   class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+
+          <div>
+            <label for="dataConclusao" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Data de Conclusão *</label>
+            <input id="dataConclusao" type="date" formControlName="dataConclusao"
+                   class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 [color-scheme:dark]" />
+          </div>
+
+          <div>
+            <label for="cargaHoraria" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Carga Horária (horas)</label>
+            <input id="cargaHoraria" type="number" formControlName="cargaHoraria" min="1"
+                   class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+
+          <div>
+            <label for="linkValidacao" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Link de Validação Externa</label>
+            <input id="linkValidacao" type="url" formControlName="linkValidacao"
+                   class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+
+          <div class="md:col-span-2">
+            <label for="tagsInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Tags (separadas por vírgula) *</label>
+            <input id="tagsInput" type="text" formControlName="tagsInput"
+                   class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+
+          <div class="md:col-span-2">
+            <label for="descricao" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Descrição / Ementa</label>
+            <textarea id="descricao" formControlName="descricao" rows="3"
+                      class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 sm:p-8 backdrop-blur-xl space-y-6">
+        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+          Comprovante & Visibilidade
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">URL da Imagem *</label>
+            <input type="text" formControlName="foto" (input)="onFotoUrlChange()"
+                   class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3" />
+            <input type="file" (change)="onFileSelected($event)" accept="image/png, image/jpeg, image/webp, application/pdf"
+                   class="text-xs text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-slate-800 file:text-slate-200 cursor-pointer" />
+
+            @if (isUploadingImage) {
+              <p class="text-xs text-blue-400 mt-2 flex items-center gap-1.5 animate-pulse">
+                <svg class="animate-spin h-3.5 w-3.5 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                </svg>
+                Enviando arquivo para Cloudflare R2...
+              </p>
+            }
+
+            @if (imageUploadError) {
+              <p class="text-xs text-red-400 mt-2">{{ imageUploadError }}</p>
+            }
+          </div>
+
+          <!-- Image/PDF Preview -->
+          <div class="relative aspect-video rounded-2xl bg-slate-950/80 border border-slate-800 flex items-center justify-center overflow-hidden">
+            @if (imagePreviewUrl) {
+              <img [src]="imagePreviewUrl" alt="Prévia" class="w-full h-full object-cover" />
+            } @else if (isPdf) {
+              <div class="flex flex-col items-center justify-center p-4 text-center">
+                <div class="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <path d="M9 15h6"/>
+                    <path d="M9 18h6"/>
+                    <path d="M9 12h2"/>
+                  </svg>
+                </div>
+                <span class="text-xs font-semibold text-slate-200">Certificado em PDF</span>
+                <span class="text-[10px] text-slate-500 mt-0.5">Gerando capa do PDF...</span>
+              </div>
+            } @else {
+              <span class="text-xs text-slate-600">Sem prévia</span>
+            }
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-800 flex items-center justify-between">
+          <div>
+            <p class="text-sm font-semibold text-white">Exibir no Portfólio Público</p>
+            <p class="text-xs text-slate-400 mt-0.5">Visível para visitantes que acessarem seu link público.</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" formControlName="publico" class="sr-only peer">
+            <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+          </label>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-4">
+        <a routerLink="/certificados/{{ hashCertificado }}" class="px-5 py-3 rounded-xl text-sm font-semibold text-slate-300 hover:text-white transition-colors">
+          Cancelar
+        </a>
+        <button type="submit" [disabled]="isSaving || isUploadingImage"
+                class="px-8 py-3 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-xl shadow-blue-500/25 transition-all disabled:opacity-50 flex items-center gap-2">
+          @if (isSaving) {
+            <span>Salvando...</span>
+          } @else if (isUploadingImage) {
+            <span>Aguardando upload...</span>
+          } @else {
+            <span>Salvar Alterações</span>
+          }
+        </button>
+      </div>
+    </form>
+  }
+</div>

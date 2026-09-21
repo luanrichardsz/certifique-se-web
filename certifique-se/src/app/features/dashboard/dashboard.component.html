@@ -1,0 +1,114 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+  <!-- Welcome Banner -->
+  <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900/90 to-blue-950/40 border border-slate-800/80 p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-3">
+          Dashboard Pessoal
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          Olá, {{ currentUser()?.nomeUsuario }}! 👋
+        </h1>
+        <p class="text-sm text-slate-400 mt-1 max-w-xl">
+          {{ currentUser()?.headline || "Gerencie suas conquistas acadêmicas e profissionais em um só lugar." }}
+        </p>
+
+        <!-- Public portfolio banner link -->
+        @if (currentUser()?.username && currentUser()?.perfilPublico) {
+          <div class="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs">
+            <span class="text-slate-400">Seu portfólio público:</span>
+            <a routerLink="/u/{{ currentUser()?.username }}" target="_blank" class="text-blue-400 hover:text-blue-300 font-mono font-medium underline">
+              /u/{{ currentUser()?.username }}
+            </a>
+            <button (click)="copyLink()" class="ml-1 text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800 transition-colors" title="Copiar link">
+              @if (copied) {
+                <span class="text-emerald-400 font-medium">Copiado!</span>
+              } @else {
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                </svg>
+              }
+            </button>
+          </div>
+        }
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a routerLink="/certificados/novo"
+           class="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-xl shadow-blue-500/25 transition-all hover:scale-[1.02] active:scale-95">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14"/><path d="M12 5v14"/>
+          </svg>
+          <span>Novo Certificado</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    <app-stats-card label="Total de Certificados" [value]="totalCertificates" subtitle="Acervo catalogado" color="blue">
+      <svg icon xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+      </svg>
+    </app-stats-card>
+
+    <app-stats-card label="Horas de Capacitação" [value]="totalHoursFormatted" subtitle="Carga horária acumulada" color="indigo">
+      <svg icon xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </app-stats-card>
+
+    <app-stats-card label="Instituições" [value]="totalInstitutions" subtitle="Emissores distintos" color="emerald">
+      <svg icon xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+      </svg>
+    </app-stats-card>
+
+    <app-stats-card label="Certificados Públicos" [value]="totalPublic" subtitle="Visíveis no portfólio" color="amber">
+      <svg icon xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+      </svg>
+    </app-stats-card>
+  </div>
+
+  <!-- Recent Certificates Section -->
+  <div class="space-y-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-xl font-bold text-white tracking-tight">Certificados Recentes</h2>
+        <p class="text-xs text-slate-400">Últimas adições à sua biblioteca</p>
+      </div>
+      @if (certificates.length > 0) {
+        <a routerLink="/certificados" class="text-sm font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors">
+          <span>Ver todos ({{ certificates.length }})</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+          </svg>
+        </a>
+      }
+    </div>
+
+    @if (isLoading) {
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 animate-pulse">
+        <div class="h-64 rounded-2xl bg-slate-900/60 border border-slate-800"></div>
+        <div class="h-64 rounded-2xl bg-slate-900/60 border border-slate-800"></div>
+        <div class="h-64 rounded-2xl bg-slate-900/60 border border-slate-800"></div>
+      </div>
+    } @else if (certificates.length === 0) {
+      <app-empty-state
+        title="Nenhum certificado cadastrado"
+        description="Comece adicionando seu primeiro certificado para ativar as estatísticas do seu portfólio."
+        actionLabel="Adicionar Certificado"
+        actionRoute="/certificados/novo">
+      </app-empty-state>
+    } @else {
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for (cert of recentCertificates; track cert.hashCertificado) {
+          <app-certificate-card [certificate]="cert" (delete)="onDelete(cert)"></app-certificate-card>
+        }
+      </div>
+    }
+  </div>
+</div>

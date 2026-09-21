@@ -1,0 +1,97 @@
+<div class="min-h-[calc(100vh-12rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="w-full max-w-lg space-y-8 rounded-3xl bg-slate-900/60 border border-slate-800 p-8 backdrop-blur-xl shadow-2xl">
+    <div class="text-center">
+      <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/20 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/>
+        </svg>
+      </div>
+      <h2 class="text-2xl font-extrabold text-white tracking-tight">Criar sua conta</h2>
+      <p class="text-sm text-slate-400 mt-2">Comece a organizar e expor suas certificações</p>
+    </div>
+
+    @if (errorMessage) {
+      <div class="rounded-xl bg-red-500/10 border border-red-500/20 p-4 text-sm text-red-400 flex items-center gap-2.5">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8"/><line x1="12" x2="12.01" y1="12"/>
+        </svg>
+        <span>{{ errorMessage }}</span>
+      </div>
+    }
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="mt-8 space-y-4">
+      <div>
+        <label for="nomeUsuario" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Nome Completo</label>
+        <input id="nomeUsuario" type="text" formControlName="nomeUsuario" placeholder="ex: Ana Silva"
+               class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
+        @if (registerForm.get("nomeUsuario")?.touched && registerForm.get("nomeUsuario")?.invalid) {
+          <p class="text-xs text-red-400 mt-1">Nome é obrigatório</p>
+        }
+      </div>
+
+      <div>
+        <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">E-mail</label>
+        <input id="email" type="email" formControlName="email" placeholder="ana@exemplo.com"
+               class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
+        @if (registerForm.get("email")?.touched && registerForm.get("email")?.invalid) {
+          <p class="text-xs text-red-400 mt-1">Informe um e-mail válido</p>
+        }
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label for="username" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+            Username
+            <span class="text-slate-500 normal-case font-normal">(opcional)</span>
+          </label>
+          <div class="relative">
+            <span class="absolute left-3 top-3 text-slate-500 text-sm font-mono">&#64;</span>
+            <input id="username" type="text" formControlName="username" placeholder="anasilva"
+                   class="w-full pl-8 pr-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-mono" />
+          </div>
+          @if (registerForm.get("username")?.touched && registerForm.get("username")?.invalid) {
+            <p class="text-xs text-red-400 mt-1">Username inválido (min. 3 caracteres)</p>
+          }
+        </div>
+
+        <div>
+          <label for="headline" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+            Título Profissional
+            <span class="text-slate-500 normal-case font-normal">(opcional)</span>
+          </label>
+          <input id="headline" type="text" formControlName="headline" placeholder="ex: Desenvolvedora Full Stack"
+                 class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
+        </div>
+      </div>
+
+      <div>
+        <label for="senha" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Senha</label>
+        <input id="senha" type="password" formControlName="senha" placeholder="Mínimo de 6 caracteres"
+               class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
+        @if (registerForm.get("senha")?.touched && registerForm.get("senha")?.invalid) {
+          <p class="text-xs text-red-400 mt-1">A senha deve ter pelo menos 6 caracteres</p>
+        }
+      </div>
+
+      <button type="submit" [disabled]="isLoading"
+              class="w-full py-3.5 px-4 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-lg shadow-blue-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 active:scale-[0.99] mt-6">
+        @if (isLoading) {
+          <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+          </svg>
+          <span>Criando conta...</span>
+        } @else {
+          <span>Cadastrar e Começar</span>
+        }
+      </button>
+    </form>
+
+    <div class="text-center pt-2 text-sm text-slate-400">
+      Já possui uma conta?
+      <a routerLink="/login" class="font-semibold text-blue-400 hover:text-blue-300 ml-1 transition-colors">
+        Fazer login
+      </a>
+    </div>
+  </div>
+</div>

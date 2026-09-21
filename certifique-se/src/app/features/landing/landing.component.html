@@ -1,0 +1,84 @@
+<div class="relative overflow-hidden pt-12 pb-24 lg:pt-20 lg:pb-32">
+  <!-- Glow backgrounds -->
+  <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-3xl pointer-events-none -z-10"></div>
+  <div class="absolute top-1/3 left-1/3 w-[400px] h-[400px] bg-indigo-600/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Hero Header -->
+    <div class="text-center max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-6">
+        <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+        Gestão Inteligente de Certificados
+      </div>
+
+      <h1 class="text-4xl sm:text-6xl font-extrabold text-white tracking-tight leading-[1.15] mb-6">
+        Seus certificados organizados e prontos para <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-violet-400">impressionar</span>.
+      </h1>
+
+      <p class="text-lg sm:text-xl text-slate-400 mb-10 leading-relaxed max-w-2xl mx-auto">
+        Armazene, contabilize suas horas de curso e compartilhe seu portfólio profissional com recrutadores em um link público e verificado.
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        @if (authService.isAuthenticated()) {
+          <a routerLink="/dashboard" 
+             class="w-full sm:w-auto px-8 py-4 rounded-xl text-base font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-xl shadow-blue-500/25 transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2">
+            <span>Acessar Meu Dashboard</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+            </svg>
+          </a>
+        } @else {
+          <a routerLink="/cadastro" 
+             class="w-full sm:w-auto px-8 py-4 rounded-xl text-base font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-xl shadow-blue-500/25 transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2">
+            <span>Criar Conta Gratuita</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+            </svg>
+          </a>
+          <a routerLink="/login" 
+             class="w-full sm:w-auto px-8 py-4 rounded-xl text-base font-semibold text-slate-300 hover:text-white bg-slate-900/80 hover:bg-slate-800 border border-slate-800 transition-all flex items-center justify-center">
+            Já tenho uma conta
+          </a>
+        }
+      </div>
+    </div>
+
+    <!-- Feature Preview Showcase -->
+    <div class="mt-20 relative max-w-5xl mx-auto">
+      <div class="rounded-3xl border border-slate-800/80 bg-slate-900/40 p-4 sm:p-8 backdrop-blur-xl shadow-2xl shadow-blue-500/5">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="rounded-2xl bg-slate-950/60 border border-slate-800/60 p-6 flex flex-col justify-between">
+            <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">Portfólio Público</h3>
+            <p class="text-sm text-slate-400">Tenha seu próprio link no formato <code class="text-blue-400 font-mono text-xs bg-slate-900 px-1.5 py-0.5 rounded">/u/seu-username</code> para colocar no LinkedIn e currículo.</p>
+          </div>
+
+          <div class="rounded-2xl bg-slate-950/60 border border-slate-800/60 p-6 flex flex-col justify-between">
+            <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">Horas Contabilizadas</h3>
+            <p class="text-sm text-slate-400">Totalize automaticamente horas de atividades complementares, cursos e capacitações sem planilhas.</p>
+          </div>
+
+          <div class="rounded-2xl bg-slate-950/60 border border-slate-800/60 p-6 flex flex-col justify-between">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">Validação Autêntica</h3>
+            <p class="text-sm text-slate-400">Cada certificado possui um identificador SHA-256 e link de validação oficial para verificação direta.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
