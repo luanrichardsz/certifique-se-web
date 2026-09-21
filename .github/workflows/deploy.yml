@@ -1,0 +1,56 @@
+name: Deploy Angular to GitHub Pages
+
+on:
+  push:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: certifique-se/package-lock.json
+
+      - name: Instalar dependências
+        run: |
+          cd certifique-se
+          npm ci
+
+      - name: Build da aplicação
+        run: |
+          cd certifique-se
+          npx ng build --configuration production --base-href /certifique-se-web/
+          # Copia index.html para 404.html para suportar o roteamento da SPA no GitHub Pages
+          cp dist/certifique-se/browser/index.html dist/certifique-se/browser/404.html
+
+      - name: Configurar Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload dos artefatos compilados
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: certifique-se/dist/certifique-se/browser
+
+      - name: Deploy para o GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
