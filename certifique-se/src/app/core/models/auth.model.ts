@@ -8,6 +8,7 @@ export interface LoginRequest {
 export interface LoginResponse {
   token: string;
   tipo: string;
+  expiracao: number;
 }
 
 export interface RegisterRequest {
