@@ -15,7 +15,7 @@ import { User, UserUpdateDTO, ChangePasswordDTO } from "../../core/models/user.m
 export class ProfileComponent implements OnInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
-  private userService = inject(UserService);
+  userService = inject(UserService);
   private router = inject(Router);
 
   currentUser = this.authService.currentUser;
@@ -42,6 +42,11 @@ export class ProfileComponent implements OnInit {
   isSavingProfile = false;
   profileSuccess: string | null = null;
   profileError: string | null = null;
+
+  isUploadingPhoto = false;
+  photoSuccess: string | null = null;
+  photoError: string | null = null;
+  avatarImageError = false;
 
   isChangingPassword = false;
   passwordSuccess: string | null = null;
@@ -86,6 +91,68 @@ export class ProfileComponent implements OnInit {
         perfilPublico: user.perfilPublico ?? true
       });
     }
+  }
+
+  onAvatarError(): void {
+    this.avatarImageError = true;
+  }
+
+  onPhotoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+    const allowedTypes = ["image/png", "image/jpeg", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      this.photoError = "Formato de imagem inválido. Use JPEG, PNG ou WebP.";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      this.photoError = "A foto deve ter no máximo 5 MB.";
+      return;
+    }
+
+    this.isUploadingPhoto = true;
+    this.photoError = null;
+    this.photoSuccess = null;
+    this.avatarImageError = false;
+
+    this.userService.uploadAvatar(file).subscribe({
+      next: (updatedUser) => {
+        this.isUploadingPhoto = false;
+        this.authService.setCurrentUser(updatedUser);
+        this.photoSuccess = "Foto de perfil atualizada com sucesso!";
+        setTimeout(() => (this.photoSuccess = null), 4000);
+      },
+      error: (err) => {
+        this.isUploadingPhoto = false;
+        this.photoError = err.error?.mensagem || "Erro ao enviar foto. Tente novamente.";
+      }
+    });
+
+    input.value = "";
+  }
+
+  onRemovePhoto(): void {
+    if (!confirm("Deseja realmente remover sua foto de perfil?")) return;
+
+    this.isUploadingPhoto = true;
+    this.photoError = null;
+    this.photoSuccess = null;
+
+    this.userService.deleteAvatar().subscribe({
+      next: (updatedUser) => {
+        this.isUploadingPhoto = false;
+        this.authService.setCurrentUser(updatedUser);
+        this.photoSuccess = "Foto de perfil removida com sucesso!";
+        setTimeout(() => (this.photoSuccess = null), 4000);
+      },
+      error: (err) => {
+        this.isUploadingPhoto = false;
+        this.photoError = err.error?.mensagem || "Erro ao remover foto.";
+      }
+    });
   }
 
   copyLink(): void {

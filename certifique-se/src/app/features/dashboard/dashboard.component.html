@@ -2,13 +2,27 @@
   <!-- Welcome Banner -->
   <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900/90 to-blue-950/40 border border-slate-800/80 p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-      <div>
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-3">
-          Dashboard Pessoal
-        </div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-          Olá, {{ currentUser()?.nomeUsuario }}! 👋
-        </h1>
+      <div class="flex flex-col sm:flex-row sm:items-center gap-5">
+        <a routerLink="/perfil" class="relative group flex-shrink-0" title="Ver ou alterar perfil">
+          @if (currentUser()?.foto && !imageError) {
+            <img [src]="userService.resolveAvatarUrl(currentUser()?.foto)"
+                 [alt]="currentUser()?.nomeUsuario"
+                 (error)="imageError = true"
+                 class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl object-cover border-2 border-slate-700/80 shadow-lg shadow-blue-500/10 group-hover:border-blue-500/50 transition-all group-hover:scale-105" />
+          } @else {
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-black text-xl sm:text-2xl flex items-center justify-center shadow-lg shadow-blue-500/10 group-hover:scale-105 transition-all">
+              {{ userInitials }}
+            </div>
+          }
+        </a>
+
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-2">
+            Dashboard Pessoal
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            Olá, {{ currentUser()?.nomeUsuario }}! 👋
+          </h1>
         <p class="text-sm text-slate-400 mt-1 max-w-xl">
           {{ currentUser()?.headline || "Gerencie suas conquistas acadêmicas e profissionais em um só lugar." }}
         </p>
@@ -31,6 +45,7 @@
             </button>
           </div>
         }
+      </div>
       </div>
 
       <div class="flex items-center gap-3">

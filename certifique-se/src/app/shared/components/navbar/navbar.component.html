@@ -48,20 +48,28 @@
 
         <div class="h-6 w-px bg-slate-800 mx-1"></div>
 
-        <div class="flex items-center gap-2.5 pl-1">
-          <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-white font-bold text-xs flex items-center justify-center border border-indigo-400/30 shadow-inner">
-            {{ userInitials }}
-          </div>
-          <span class="text-sm font-medium text-slate-200 max-w-[120px] truncate">
+        <a routerLink="/perfil" class="flex items-center gap-2.5 pl-1 group hover:opacity-90 transition-opacity">
+          @if (currentUser()?.foto && !imageError) {
+            <img [src]="userService.resolveAvatarUrl(currentUser()?.foto)"
+                 [alt]="currentUser()?.nomeUsuario"
+                 (error)="onImageError()"
+                 class="w-8 h-8 rounded-full object-cover border border-indigo-400/40 shadow-sm shadow-indigo-500/20 ring-1 ring-white/10 group-hover:ring-indigo-400 transition-all" />
+          } @else {
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-white font-bold text-xs flex items-center justify-center border border-indigo-400/30 shadow-inner group-hover:border-indigo-400/60 transition-colors">
+              {{ userInitials }}
+            </div>
+          }
+          <span class="text-sm font-medium text-slate-200 max-w-[120px] truncate group-hover:text-white transition-colors">
             {{ currentUser()?.nomeUsuario }}
           </span>
-          <button (click)="logout()" title="Sair da conta"
-                  class="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/>
-            </svg>
-          </button>
-        </div>
+        </a>
+
+        <button (click)="logout()" title="Sair da conta"
+                class="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/>
+          </svg>
+        </button>
       } @else {
         <a routerLink="/login" class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors">
           Entrar
@@ -91,6 +99,24 @@
   @if (isMenuOpen) {
     <div class="md:hidden px-4 pt-2 pb-4 space-y-2 bg-slate-900/95 border-b border-slate-800">
       @if (authService.isAuthenticated()) {
+        <!-- User info banner on mobile -->
+        <a routerLink="/perfil" (click)="isMenuOpen = false" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-slate-800/60 border border-slate-700/60 mb-3">
+          @if (currentUser()?.foto && !imageError) {
+            <img [src]="userService.resolveAvatarUrl(currentUser()?.foto)"
+                 [alt]="currentUser()?.nomeUsuario"
+                 (error)="onImageError()"
+                 class="w-10 h-10 rounded-full object-cover border border-indigo-400/40 shadow-sm" />
+          } @else {
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-white font-bold text-sm flex items-center justify-center border border-indigo-400/30 shadow-inner">
+              {{ userInitials }}
+            </div>
+          }
+          <div class="flex flex-col min-w-0 flex-1">
+            <span class="text-sm font-semibold text-white truncate">{{ currentUser()?.nomeUsuario }}</span>
+            <span class="text-xs text-slate-400 truncate">{{ currentUser()?.headline || currentUser()?.email }}</span>
+          </div>
+        </a>
+
         <a routerLink="/dashboard" (click)="isMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800">Dashboard</a>
         <a routerLink="/certificados" (click)="isMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800">Meus Certificados</a>
         <a routerLink="/certificados/novo" (click)="isMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-blue-400 hover:bg-slate-800">+ Novo Certificado</a>

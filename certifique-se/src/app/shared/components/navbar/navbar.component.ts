@@ -1,6 +1,7 @@
 import { Component, inject } from "@angular/core";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { AuthService } from "../../../core/services/auth.service";
+import { UserService } from "../../../core/services/user.service";
 
 @Component({
   selector: "app-navbar",
@@ -11,8 +12,10 @@ import { AuthService } from "../../../core/services/auth.service";
 })
 export class NavbarComponent {
   authService = inject(AuthService);
+  userService = inject(UserService);
   currentUser = this.authService.currentUser;
   isMenuOpen = false;
+  imageError = false;
 
   get userInitials(): string {
     const user = this.currentUser();
@@ -23,6 +26,10 @@ export class NavbarComponent {
       .slice(0, 2)
       .join("")
       .toUpperCase();
+  }
+
+  onImageError(): void {
+    this.imageError = true;
   }
 
   toggleMenu(): void {

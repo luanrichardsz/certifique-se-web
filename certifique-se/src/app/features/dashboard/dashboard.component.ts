@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { AuthService } from "../../core/services/auth.service";
 import { CertificateService } from "../../core/services/certificate.service";
+import { UserService } from "../../core/services/user.service";
 import { Certificate } from "../../core/models/certificate.model";
 import { StatsCardComponent } from "../../shared/components/stats-card/stats-card.component";
 import { CertificateCardComponent } from "../../shared/components/certificate-card/certificate-card.component";
@@ -17,6 +18,14 @@ import { EmptyStateComponent } from "../../shared/components/empty-state/empty-s
 export class DashboardComponent implements OnInit {
   authService = inject(AuthService);
   certificateService = inject(CertificateService);
+  userService = inject(UserService);
+  imageError = false;
+
+  get userInitials(): string {
+    const user = this.currentUser();
+    if (!user || !user.nomeUsuario) return "U";
+    return user.nomeUsuario.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase();
+  }
 
   currentUser = this.authService.currentUser;
   certificates: Certificate[] = [];

@@ -3,6 +3,7 @@ export interface PublicProfile {
   username: string;
   headline?: string;
   biografia?: string;
+  foto?: string | null;
   membroDesde: string;
   totalCertificados: number;
   totalHoras: number;

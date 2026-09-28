@@ -18,6 +18,27 @@ export class UserService {
     return this.http.put<User>(`${environment.apiUrl}/usuarios/me`, dto);
   }
 
+  uploadAvatar(file: File): Observable<User> {
+    const formData = new FormData();
+    formData.append("arquivo", file);
+    return this.http.post<User>(`${environment.apiUrl}/usuarios/me/foto`, formData);
+  }
+
+  deleteAvatar(): Observable<User> {
+    return this.http.delete<User>(`${environment.apiUrl}/usuarios/me/foto`);
+  }
+
+  resolveAvatarUrl(url: string | null | undefined): string {
+    if (!url) return "";
+    if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("data:")) {
+      return url;
+    }
+    if (url.startsWith("/")) {
+      return `${environment.apiUrl}${url}`;
+    }
+    return `${environment.apiUrl}/${url}`;
+  }
+
   changePassword(dto: ChangePasswordDTO): Observable<void> {
     return this.http.put<void>(`${environment.apiUrl}/usuarios/me/senha`, dto);
   }

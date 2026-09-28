@@ -5,6 +5,7 @@ export interface User {
   email: string;
   headline?: string;
   biografia?: string;
+  foto?: string | null;
   perfilPublico: boolean;
   role: "USER" | "ADMIN";
   criadoEm: string;
@@ -16,6 +17,7 @@ export interface UserUpdateDTO {
   username?: string;
   headline?: string;
   biografia?: string;
+  foto?: string | null;
   perfilPublico?: boolean;
 }
 

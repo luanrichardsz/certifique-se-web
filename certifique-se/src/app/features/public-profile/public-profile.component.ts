@@ -3,6 +3,7 @@ import { CommonModule } from "@angular/common";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 import { PublicService } from "../../core/services/public.service";
+import { UserService } from "../../core/services/user.service";
 import { PublicProfile, PublicCertificate } from "../../core/models/public-profile.model";
 import { CertificateCardComponent } from "../../shared/components/certificate-card/certificate-card.component";
 import { Certificate } from "../../core/models/certificate.model";
@@ -18,6 +19,12 @@ import { EmptyStateComponent } from "../../shared/components/empty-state/empty-s
 export class PublicProfileComponent implements OnInit {
   private publicService = inject(PublicService);
   private route = inject(ActivatedRoute);
+  userService = inject(UserService);
+  imageError = false;
+
+  onImageError(): void {
+    this.imageError = true;
+  }
 
   username = "";
   profile: PublicProfile | null = null;
