@@ -27,4 +27,5 @@ export interface ForgotPasswordRequest {
 export interface ResetPasswordRequest {
   token: string;
   novaSenha: string;
+  confirmacaoNovaSenha: string;
 }
