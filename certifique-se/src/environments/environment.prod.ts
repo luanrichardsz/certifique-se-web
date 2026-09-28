@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: "https://api.certifique-se.app"
+  apiUrl: "https://certifique-se-api.onrender.com"
 };
