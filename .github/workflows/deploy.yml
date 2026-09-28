@@ -39,7 +39,7 @@ jobs:
       - name: Build da aplicação
         run: |
           cd certifique-se
-          npx ng build --configuration production --base-href /certifique-se-web/
+          npx ng build --configuration production --base-href /
           # Copia index.html para 404.html para suportar o roteamento da SPA no GitHub Pages
           cp dist/certifique-se/browser/index.html dist/certifique-se/browser/404.html
 
