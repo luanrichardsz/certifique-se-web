@@ -48,7 +48,11 @@ export class ResetPasswordComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = null;
 
-    this.authService.resetPassword({ token: this.token, novaSenha: this.form.value.novaSenha }).subscribe({
+    this.authService.resetPassword({
+      token: this.token,
+      novaSenha: this.form.value.novaSenha,
+      confirmacaoNovaSenha: this.form.value.confirmarSenha
+    }).subscribe({
       next: () => {
         this.isLoading = false;
         this.successMessage = "Sua senha foi redefinida com sucesso! Você já pode fazer login.";
