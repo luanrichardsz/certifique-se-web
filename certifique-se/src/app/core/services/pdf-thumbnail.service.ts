@@ -22,18 +22,20 @@ export class PdfThumbnailService {
   async generateThumbnail(source: Blob | string, scale = 2.0): Promise<string> {
     this.ensureWorker();
 
-    let loadingTask;
+    let data: Uint8Array;
     if (typeof source === "string") {
-      loadingTask = pdfjsLib.getDocument({
-        url: source,
-        withCredentials: false
-      });
+      const response = await fetch(source);
+      if (!response.ok) {
+        throw new Error(`Falha ao obter arquivo PDF: HTTP ${response.status}`);
+      }
+      const arrayBuffer = await response.arrayBuffer();
+      data = new Uint8Array(arrayBuffer);
     } else {
       const arrayBuffer = await source.arrayBuffer();
-      loadingTask = pdfjsLib.getDocument({
-        data: new Uint8Array(arrayBuffer)
-      });
+      data = new Uint8Array(arrayBuffer);
     }
+
+    const loadingTask = pdfjsLib.getDocument({ data });
 
     const pdfDoc = await loadingTask.promise;
     const page = await pdfDoc.getPage(1);
@@ -53,7 +55,6 @@ export class PdfThumbnailService {
     canvas.height = viewport.height;
 
     await page.render({
-      canvas: canvas,
       canvasContext: context,
       viewport: viewport
     }).promise;
