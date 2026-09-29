@@ -1,0 +1,4 @@
+/* Admin component custom styles */
+:host {
+  display: block;
+}

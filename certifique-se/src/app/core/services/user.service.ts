@@ -10,6 +10,10 @@ import { User, UserUpdateDTO, ChangePasswordDTO } from "../models/user.model";
 export class UserService {
   private http = inject(HttpClient);
 
+  getAllUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${environment.apiUrl}/usuarios`);
+  }
+
   getProfile(): Observable<User> {
     return this.http.get<User>(`${environment.apiUrl}/usuarios/me`);
   }

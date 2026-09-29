@@ -10,6 +10,10 @@ import { Certificate, CertificateRequestDTO, CertificateUpdateDTO, CertificateFi
 export class CertificateService {
   private http = inject(HttpClient);
 
+  getAllCertificates(): Observable<Certificate[]> {
+    return this.http.get<Certificate[]>(`${environment.apiUrl}/certificados`);
+  }
+
   getMyCertificates(filter?: CertificateFilterDTO): Observable<Certificate[]> {
     let params = new HttpParams();
     if (filter?.nome) {
