@@ -30,3 +30,11 @@
   backface-visibility: hidden;
   will-change: transform;
 }
+
+/* Renderização de alta qualidade para certificados (todas as extensões) */
+.certificate-crisp {
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
+}
