@@ -1,57 +1,57 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
   <!-- Welcome Banner -->
-  <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900/90 to-blue-950/40 border border-slate-800/80 p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-      <div class="flex flex-col sm:flex-row sm:items-center gap-5">
-        <a routerLink="/perfil" class="relative group flex-shrink-0" title="Ver ou alterar perfil">
+  <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900/90 to-blue-950/40 border border-slate-800/80 p-5 sm:p-8 backdrop-blur-xl shadow-2xl">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-5 sm:gap-6">
+      <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
+        <a routerLink="/perfil" class="relative group flex-shrink-0 self-start sm:self-auto" title="Ver ou alterar perfil">
           @if (currentUser()?.foto && !imageError) {
             <img [src]="userService.resolveAvatarUrl(currentUser()?.foto)"
                  [alt]="currentUser()?.nomeUsuario"
                  (error)="imageError = true"
-                 class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl object-cover avatar-crisp border-2 border-slate-700/80 shadow-lg shadow-blue-500/10 group-hover:border-blue-500/50 transition-all group-hover:scale-105" />
+                 class="w-14 h-14 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl object-cover avatar-crisp border-2 border-slate-700/80 shadow-lg shadow-blue-500/10 group-hover:border-blue-500/50 transition-all group-hover:scale-105" />
           } @else {
-            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-black text-xl sm:text-2xl flex items-center justify-center shadow-lg shadow-blue-500/10 group-hover:scale-105 transition-all">
+            <div class="w-14 h-14 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-black text-lg sm:text-2xl flex items-center justify-center shadow-lg shadow-blue-500/10 group-hover:scale-105 transition-all">
               {{ userInitials }}
             </div>
           }
         </a>
 
         <div>
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-2">
+          <div class="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-2">
             Dashboard Pessoal
           </div>
-          <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h1 class="text-xl sm:text-3xl font-extrabold text-white tracking-tight">
             Olá, {{ currentUser()?.nomeUsuario }}! 👋
           </h1>
-        <p class="text-sm text-slate-400 mt-1 max-w-xl">
-          {{ currentUser()?.headline || "Gerencie suas conquistas acadêmicas e profissionais em um só lugar." }}
-        </p>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1 max-w-xl line-clamp-2 sm:line-clamp-none">
+            {{ currentUser()?.headline || "Gerencie suas conquistas acadêmicas e profissionais em um só lugar." }}
+          </p>
 
-        <!-- Public portfolio banner link -->
-        @if (currentUser()?.username && currentUser()?.perfilPublico) {
-          <div class="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs">
-            <span class="text-slate-400">Seu portfólio público:</span>
-            <a routerLink="/u/{{ currentUser()?.username }}" target="_blank" class="text-blue-400 hover:text-blue-300 font-mono font-medium underline">
-              /u/{{ currentUser()?.username }}
-            </a>
-            <button (click)="copyLink()" class="ml-1 text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800 transition-colors" title="Copiar link">
-              @if (copied) {
-                <span class="text-emerald-400 font-medium">Copiado!</span>
-              } @else {
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
-                </svg>
-              }
-            </button>
-          </div>
-        }
-      </div>
+          <!-- Public portfolio banner link -->
+          @if (currentUser()?.username && currentUser()?.perfilPublico) {
+            <div class="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs">
+              <span class="text-slate-400 text-[11px] sm:text-xs">Portfólio:</span>
+              <a routerLink="/u/{{ currentUser()?.username }}" target="_blank" class="text-blue-400 hover:text-blue-300 font-mono font-medium underline text-[11px] sm:text-xs">
+                /u/{{ currentUser()?.username }}
+              </a>
+              <button (click)="copyLink()" class="ml-1 text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800 transition-colors" title="Copiar link">
+                @if (copied) {
+                  <span class="text-emerald-400 font-medium text-[10px] sm:text-xs">Copiado!</span>
+                } @else {
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                  </svg>
+                }
+              </button>
+            </div>
+          }
+        </div>
       </div>
 
       <div class="flex items-center gap-3">
         <a routerLink="/certificados/novo"
-           class="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-xl shadow-blue-500/25 transition-all hover:scale-[1.02] active:scale-95">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+           class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-xl shadow-blue-500/25 transition-all hover:scale-[1.02] active:scale-95">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M5 12h14"/><path d="M12 5v14"/>
           </svg>
           <span>Novo Certificado</span>
@@ -60,8 +60,8 @@
     </div>
   </div>
 
-  <!-- Stats Grid -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+  <!-- Stats Grid: 2 columns on mobile, 4 columns on lg -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
     <app-stats-card label="Total de Certificados" [value]="totalCertificates" subtitle="Acervo catalogado" color="blue">
       <svg icon xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />

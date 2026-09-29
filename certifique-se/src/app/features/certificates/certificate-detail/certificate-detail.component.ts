@@ -26,6 +26,10 @@ export class CertificateDetailComponent implements OnInit {
   pdfThumbnailUrl: string | null = null;
   isLoadingPdfThumb = false;
 
+  // Mobile accordion state
+  showHashSection = false;
+
+
   get isPdf(): boolean {
     const url = this.certificate?.foto;
     return !!url && url.toLowerCase().includes(".pdf");

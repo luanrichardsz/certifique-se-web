@@ -5,10 +5,12 @@ import { CertificateService } from "../../../core/services/certificate.service";
 import { PdfThumbnailService } from "../../../core/services/pdf-thumbnail.service";
 import { Certificate, CertificateUpdateDTO } from "../../../core/models/certificate.model";
 
+import { CommonModule } from "@angular/common";
+
 @Component({
   selector: "app-certificate-edit",
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: "./certificate-edit.component.html",
   styleUrl: "./certificate-edit.component.css"
 })
@@ -27,6 +29,57 @@ export class CertificateEditComponent implements OnInit {
   errorMessage: string | null = null;
   imageUploadError: string | null = null;
   imagePreviewUrl: string | null = null;
+
+  // Mobile wizard stepper (only used on screens < md)
+  mobileStep = 1;
+  readonly totalSteps = 3;
+  stepLabels = ["Dados", "Detalhes", "Arquivo"];
+
+  get isMobile(): boolean {
+    return typeof window !== "undefined" && window.innerWidth < 768;
+  }
+
+  get canGoNext(): boolean {
+    if (this.mobileStep === 1) {
+      const nome = this.certificateForm.get("nome");
+      const empresa = this.certificateForm.get("empresa");
+      const data = this.certificateForm.get("dataConclusao");
+      return !!(nome?.valid && empresa?.valid && data?.valid);
+    }
+    if (this.mobileStep === 2) {
+      return !!this.certificateForm.get("tagsInput")?.valid;
+    }
+    return true;
+  }
+
+  nextStep(): void {
+    if (this.mobileStep === 1) {
+      ["nome", "empresa", "dataConclusao"].forEach(f => this.certificateForm.get(f)?.markAsTouched());
+      if (!this.canGoNext) return;
+    }
+    if (this.mobileStep === 2) {
+      this.certificateForm.get("tagsInput")?.markAsTouched();
+      if (!this.canGoNext) return;
+    }
+    if (this.mobileStep < this.totalSteps) {
+      this.mobileStep++;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
+
+  prevStep(): void {
+    if (this.mobileStep > 1) {
+      this.mobileStep--;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
+
+  goToStep(step: number): void {
+    if (step < this.mobileStep) {
+      this.mobileStep = step;
+    }
+  }
+
 
   certificateForm: FormGroup = this.fb.group({
     nome: ["", [Validators.required, Validators.maxLength(150)]],

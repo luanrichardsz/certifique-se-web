@@ -4,12 +4,13 @@ import { Router, RouterLink } from "@angular/router";
 import { AuthService } from "../../core/services/auth.service";
 import { UserService } from "../../core/services/user.service";
 import { User, UserUpdateDTO, ChangePasswordDTO } from "../../core/models/user.model";
+import { CommonModule } from "@angular/common";
 import { ImageCropperModalComponent } from "../../shared/components/image-cropper-modal/image-cropper-modal.component";
 
 @Component({
   selector: "app-profile",
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, ImageCropperModalComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, ImageCropperModalComponent],
   templateUrl: "./profile.component.html",
   styleUrl: "./profile.component.css"
 })
@@ -20,6 +21,7 @@ export class ProfileComponent implements OnInit {
   private router = inject(Router);
 
   currentUser = this.authService.currentUser;
+  activeTab: "perfil" | "seguranca" = "perfil";
 
   profileForm: FormGroup = this.fb.group({
     nomeUsuario: ["", [Validators.required, Validators.maxLength(100)]],

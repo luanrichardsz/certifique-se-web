@@ -97,17 +97,17 @@
 
   <!-- Mobile Dropdown -->
   @if (isMenuOpen) {
-    <div class="md:hidden px-4 pt-2 pb-4 space-y-2 bg-slate-900/95 border-b border-slate-800">
+    <div class="md:hidden px-4 pt-3 pb-5 space-y-3 bg-slate-900/98 border-b border-slate-800 backdrop-blur-xl shadow-2xl">
       @if (authService.isAuthenticated()) {
         <!-- User info banner on mobile -->
-        <a routerLink="/perfil" (click)="isMenuOpen = false" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-slate-800/60 border border-slate-700/60 mb-3">
+        <a routerLink="/perfil" (click)="isMenuOpen = false" class="flex items-center gap-3 p-3 rounded-2xl bg-slate-800/80 border border-slate-700/60 transition-all active:scale-[0.99]">
           @if (currentUser()?.foto && !imageError) {
             <img [src]="userService.resolveAvatarUrl(currentUser()?.foto)"
                  [alt]="currentUser()?.nomeUsuario"
                  (error)="onImageError()"
-                 class="w-10 h-10 rounded-full object-cover avatar-crisp border border-indigo-400/40 shadow-sm" />
+                 class="w-10 h-10 rounded-full object-cover avatar-crisp border border-indigo-400/40 shadow-sm flex-shrink-0" />
           } @else {
-            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-white font-bold text-sm flex items-center justify-center border border-indigo-400/30 shadow-inner">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-white font-bold text-xs flex items-center justify-center border border-indigo-400/30 shadow-inner flex-shrink-0">
               {{ userInitials }}
             </div>
           }
@@ -115,19 +115,80 @@
             <span class="text-sm font-semibold text-white truncate">{{ currentUser()?.nomeUsuario }}</span>
             <span class="text-xs text-slate-400 truncate">{{ currentUser()?.headline || currentUser()?.email }}</span>
           </div>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m9 18 6-6-6-6"/>
+          </svg>
         </a>
 
-        <a routerLink="/dashboard" (click)="isMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800">Dashboard</a>
-        <a routerLink="/certificados" (click)="isMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800">Meus Certificados</a>
-        <a routerLink="/certificados/novo" (click)="isMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-blue-400 hover:bg-slate-800">+ Novo Certificado</a>
-        <a routerLink="/perfil" (click)="isMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800">Meu Perfil</a>
-        @if (currentUser()?.username && currentUser()?.perfilPublico) {
-          <a routerLink="/u/{{ currentUser()?.username }}" (click)="isMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-indigo-400 hover:bg-slate-800">Ver Portfólio Público</a>
-        }
-        <button (click)="logout(); isMenuOpen = false" class="w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-400 hover:bg-red-500/10">Sair</button>
+        <!-- Quick Primary Action -->
+        <a routerLink="/certificados/novo" (click)="isMenuOpen = false"
+           class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 shadow-md shadow-blue-600/20 active:scale-95 transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14"/><path d="M12 5v14"/>
+          </svg>
+          <span>Adicionar Novo Certificado</span>
+        </a>
+
+        <!-- Navigation Links -->
+        <div class="space-y-1 pt-1">
+          <a routerLink="/dashboard" (click)="isMenuOpen = false"
+             routerLinkActive="bg-slate-800 text-blue-400 font-semibold" [routerLinkActiveOptions]="{exact: true}"
+             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
+            </svg>
+            <span>Dashboard</span>
+          </a>
+
+          <a routerLink="/certificados" (click)="isMenuOpen = false"
+             routerLinkActive="bg-slate-800 text-blue-400 font-semibold"
+             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/>
+            </svg>
+            <span>Meus Certificados</span>
+          </a>
+
+          <a routerLink="/perfil" (click)="isMenuOpen = false"
+             routerLinkActive="bg-slate-800 text-blue-400 font-semibold"
+             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span>Meu Perfil</span>
+          </a>
+
+          @if (currentUser()?.username && currentUser()?.perfilPublico) {
+            <a routerLink="/u/{{ currentUser()?.username }}" (click)="isMenuOpen = false"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-indigo-400 hover:text-indigo-300 hover:bg-indigo-950/30 border border-indigo-500/20 transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              </svg>
+              <span>Ver Portfólio Público</span>
+            </a>
+          }
+        </div>
+
+        <div class="pt-2 border-t border-slate-800">
+          <button (click)="logout(); isMenuOpen = false"
+                  class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/>
+            </svg>
+            <span>Sair da conta</span>
+          </button>
+        </div>
       } @else {
-        <a routerLink="/login" (click)="isMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800">Entrar</a>
-        <a routerLink="/cadastro" (click)="isMenuOpen = false" class="block px-3 py-2 rounded-md text-base font-medium text-blue-400 hover:bg-slate-800">Criar Conta Grátis</a>
+        <div class="space-y-2 pt-1">
+          <a routerLink="/login" (click)="isMenuOpen = false"
+             class="block w-full text-center px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-200 bg-slate-800 hover:bg-slate-700 transition-colors">
+            Entrar
+          </a>
+          <a routerLink="/cadastro" (click)="isMenuOpen = false"
+             class="block w-full text-center px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-md shadow-blue-500/20 transition-all">
+            Criar Conta Grátis
+          </a>
+        </div>
       }
     </div>
   }

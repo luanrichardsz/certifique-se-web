@@ -25,6 +25,15 @@ export class CertificateListComponent implements OnInit {
   selectedInstitution = "";
   selectedTag = "";
   visibilityFilter: "all" | "public" | "private" = "all";
+  showMobileFilters = false;
+
+  get activeFiltersCount(): number {
+    let count = 0;
+    if (this.selectedInstitution) count++;
+    if (this.selectedTag) count++;
+    if (this.visibilityFilter !== "all") count++;
+    return count;
+  }
 
   get institutions(): string[] {
     const list = this.certificates.map((c) => c.empresa.trim()).filter(Boolean);

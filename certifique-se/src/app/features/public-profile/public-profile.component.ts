@@ -33,6 +33,7 @@ export class PublicProfileComponent implements OnInit {
   notFound = false;
   searchQuery = "";
   selectedTag = "";
+  showFullBio = false;
 
   get userInitials(): string {
     if (!this.profile?.nomeUsuario) return "U";
