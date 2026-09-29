@@ -1,4 +1,9 @@
-<div class="group relative rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:border-slate-700 overflow-hidden flex flex-col transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1">
+<div class="group relative rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:border-slate-700 sm:hover:border-blue-500/40 overflow-hidden flex flex-col transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50"
+     (click)="onCardClick($event)"
+     (keydown)="onCardKeydown($event)"
+     tabindex="0"
+     role="button"
+     [attr.aria-label]="isPublicView ? ('Visualizar certificado ' + certificate.nome) : ('Ver detalhes do certificado ' + certificate.nome)">
   <!-- Top Image/Preview banner -->
   <div class="relative aspect-video w-full overflow-hidden bg-slate-950/80 border-b border-slate-800/60 flex items-center justify-center">
     @if (isPdf && pdfThumbnailUrl) {
@@ -93,17 +98,19 @@
       <div class="flex items-center gap-2">
         @if (!isPublicView) {
           <a routerLink="/certificados/{{ certificate.hashCertificado }}" 
-             class="font-medium text-slate-300 hover:text-white flex items-center gap-1 transition-colors">
+             (click)="$event.stopPropagation()"
+             class="font-medium text-slate-300 group-hover:text-blue-400 flex items-center gap-1.5 transition-colors">
             <span>Ver detalhes</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
             </svg>
           </a>
         } @else if (certificate.foto) {
           <a [href]="fotoUrl" target="_blank" rel="noopener noreferrer"
-             class="font-medium text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors">
+             (click)="$event.stopPropagation()"
+             class="font-medium text-blue-400 group-hover:text-blue-300 flex items-center gap-1.5 transition-colors">
             <span>Visualizar certificado</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
             </svg>
           </a>
@@ -113,6 +120,7 @@
       <div class="flex items-center gap-1.5">
         @if (certificate.linkValidacao) {
           <a [href]="certificate.linkValidacao" target="_blank" rel="noopener noreferrer" title="Validar autenticidade oficial"
+             (click)="$event.stopPropagation()"
              class="p-1.5 text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
@@ -123,6 +131,7 @@
 
         @if (showActions && !isPublicView) {
           <a routerLink="/certificados/{{ certificate.hashCertificado }}/editar" title="Editar certificado"
+             (click)="$event.stopPropagation()"
              class="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>

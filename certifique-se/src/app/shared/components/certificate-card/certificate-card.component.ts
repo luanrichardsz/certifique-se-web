@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { Certificate } from "../../../core/models/certificate.model";
 import { BadgeComponent } from "../badge/badge.component";
 import { CertificateService } from "../../../core/services/certificate.service";
@@ -16,6 +16,7 @@ import { PdfThumbnailService } from "../../../core/services/pdf-thumbnail.servic
 export class CertificateCardComponent implements OnInit {
   private certificateService = inject(CertificateService);
   private pdfThumbnailService = inject(PdfThumbnailService);
+  private router = inject(Router);
 
   @Input({ required: true }) certificate!: Certificate;
   @Input() showActions = true;
@@ -72,5 +73,38 @@ export class CertificateCardComponent implements OnInit {
   onDelete(e: Event): void {
     e.stopPropagation();
     this.delete.emit(this.certificate);
+  }
+
+  onCardClick(e: MouseEvent): void {
+    const target = e.target as HTMLElement | null;
+    if (target && target.closest("button, a")) {
+      return;
+    }
+
+    const selection = window.getSelection();
+    if (selection && selection.toString().trim().length > 0) {
+      return;
+    }
+
+    this.openDetails();
+  }
+
+  onCardKeydown(e: KeyboardEvent): void {
+    if (e.key === "Enter" || e.key === " ") {
+      const target = e.target as HTMLElement | null;
+      if (target && target.closest("button, a")) {
+        return;
+      }
+      e.preventDefault();
+      this.openDetails();
+    }
+  }
+
+  openDetails(): void {
+    if (!this.isPublicView) {
+      this.router.navigate(["/certificados", this.certificate.hashCertificado]);
+    } else if (this.fotoUrl) {
+      window.open(this.fotoUrl, "_blank", "noopener,noreferrer");
+    }
   }
 }
