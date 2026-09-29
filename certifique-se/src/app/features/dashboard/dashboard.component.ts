@@ -54,7 +54,16 @@ export class DashboardComponent implements OnInit {
   }
 
   get recentCertificates(): Certificate[] {
-    return this.certificates.slice(0, 3);
+    return [...this.certificates]
+      .sort((a, b) => {
+        const idA = a.idCertificado || 0;
+        const idB = b.idCertificado || 0;
+        if (idB !== idA) {
+          return idB - idA;
+        }
+        return (b.dataConclusao || "").localeCompare(a.dataConclusao || "");
+      })
+      .slice(0, 3);
   }
 
   get publicProfileUrl(): string {
