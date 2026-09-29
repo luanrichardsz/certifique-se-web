@@ -19,7 +19,7 @@ export class PdfThumbnailService {
    * Generates a dataURL JPEG image of the 1st page of a PDF.
    * Can receive a File/Blob or a remote URL string.
    */
-  async generateThumbnail(source: Blob | string, scale = 1.5): Promise<string> {
+  async generateThumbnail(source: Blob | string, scale = 2.0): Promise<string> {
     this.ensureWorker();
 
     let loadingTask;
@@ -40,11 +40,14 @@ export class PdfThumbnailService {
 
     const viewport = page.getViewport({ scale });
     const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
+    const context = canvas.getContext("2d", { alpha: false });
 
     if (!context) {
       throw new Error("Canvas 2D context not available");
     }
+
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = "high";
 
     canvas.width = viewport.width;
     canvas.height = viewport.height;
@@ -55,6 +58,6 @@ export class PdfThumbnailService {
       viewport: viewport
     }).promise;
 
-    return canvas.toDataURL("image/jpeg", 0.85);
+    return canvas.toDataURL("image/jpeg", 0.95);
   }
 }

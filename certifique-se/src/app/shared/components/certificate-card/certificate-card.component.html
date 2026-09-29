@@ -4,7 +4,7 @@
     @if (isPdf && pdfThumbnailUrl) {
       <div class="relative w-full h-full">
         <img [src]="pdfThumbnailUrl" [alt]="certificate.nome"
-             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+             class="w-full h-full object-cover certificate-crisp group-hover:scale-105 transition-transform duration-500"
              loading="lazy" />
         <div class="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded-md bg-red-600/90 text-white font-black text-[9px] tracking-wider uppercase backdrop-blur-sm shadow-md flex items-center gap-1">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -27,7 +27,7 @@
       </div>
     } @else if (certificate.foto && !imageError) {
       <img [src]="fotoUrl" [alt]="certificate.nome"
-           class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+           class="w-full h-full object-cover certificate-crisp group-hover:scale-105 transition-transform duration-500"
            loading="lazy"
            (error)="onImageError()" />
     } @else {
@@ -100,7 +100,7 @@
             </svg>
           </a>
         } @else if (certificate.foto) {
-          <a [href]="certificate.foto" target="_blank" rel="noopener noreferrer"
+          <a [href]="fotoUrl" target="_blank" rel="noopener noreferrer"
              class="font-medium text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors">
             <span>Visualizar certificado</span>
             <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
