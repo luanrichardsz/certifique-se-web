@@ -22,3 +22,13 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #334155;
 }
+
+/* Otimização de renderização e nitidez para avatares e fotos de perfil */
+.avatar-crisp {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
+}

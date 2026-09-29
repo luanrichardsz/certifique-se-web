@@ -53,7 +53,7 @@
             <img [src]="userService.resolveAvatarUrl(currentUser()?.foto)"
                  [alt]="currentUser()?.nomeUsuario"
                  (error)="onImageError()"
-                 class="w-8 h-8 rounded-full object-cover border border-indigo-400/40 shadow-sm shadow-indigo-500/20 ring-1 ring-white/10 group-hover:ring-indigo-400 transition-all" />
+                 class="w-8 h-8 rounded-full object-cover avatar-crisp border border-indigo-400/40 shadow-sm shadow-indigo-500/20 ring-1 ring-white/10 group-hover:ring-indigo-400 transition-all" />
           } @else {
             <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-white font-bold text-xs flex items-center justify-center border border-indigo-400/30 shadow-inner group-hover:border-indigo-400/60 transition-colors">
               {{ userInitials }}
@@ -105,7 +105,7 @@
             <img [src]="userService.resolveAvatarUrl(currentUser()?.foto)"
                  [alt]="currentUser()?.nomeUsuario"
                  (error)="onImageError()"
-                 class="w-10 h-10 rounded-full object-cover border border-indigo-400/40 shadow-sm" />
+                 class="w-10 h-10 rounded-full object-cover avatar-crisp border border-indigo-400/40 shadow-sm" />
           } @else {
             <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-white font-bold text-sm flex items-center justify-center border border-indigo-400/30 shadow-inner">
               {{ userInitials }}

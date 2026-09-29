@@ -4,11 +4,12 @@ import { Router, RouterLink } from "@angular/router";
 import { AuthService } from "../../core/services/auth.service";
 import { UserService } from "../../core/services/user.service";
 import { User, UserUpdateDTO, ChangePasswordDTO } from "../../core/models/user.model";
+import { ImageCropperModalComponent } from "../../shared/components/image-cropper-modal/image-cropper-modal.component";
 
 @Component({
   selector: "app-profile",
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, ImageCropperModalComponent],
   templateUrl: "./profile.component.html",
   styleUrl: "./profile.component.css"
 })
@@ -47,6 +48,10 @@ export class ProfileComponent implements OnInit {
   photoSuccess: string | null = null;
   photoError: string | null = null;
   avatarImageError = false;
+
+  // Image Cropper Modal state
+  showCropperModal = false;
+  cropImageSource: string | null = null;
 
   isChangingPassword = false;
   passwordSuccess: string | null = null;
@@ -108,17 +113,35 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      this.photoError = "A foto deve ter no máximo 5 MB.";
+    if (file.size > 3 * 1024 * 1024) {
+      this.photoError = "A foto de perfil deve ter no máximo 3MB.";
       return;
     }
+
+    this.photoError = null;
+    this.photoSuccess = null;
+
+    // Load file into DataURL and open interactive 1:1 cropper
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.cropImageSource = reader.result as string;
+      this.showCropperModal = true;
+    };
+    reader.readAsDataURL(file);
+
+    input.value = "";
+  }
+
+  onCropConfirmed(croppedFile: File): void {
+    this.showCropperModal = false;
+    this.cropImageSource = null;
 
     this.isUploadingPhoto = true;
     this.photoError = null;
     this.photoSuccess = null;
     this.avatarImageError = false;
 
-    this.userService.uploadAvatar(file).subscribe({
+    this.userService.uploadAvatar(croppedFile).subscribe({
       next: (updatedUser) => {
         this.isUploadingPhoto = false;
         this.authService.setCurrentUser(updatedUser);
@@ -130,8 +153,11 @@ export class ProfileComponent implements OnInit {
         this.photoError = err.error?.mensagem || "Erro ao enviar foto. Tente novamente.";
       }
     });
+  }
 
-    input.value = "";
+  onCropCancelled(): void {
+    this.showCropperModal = false;
+    this.cropImageSource = null;
   }
 
   onRemovePhoto(): void {

@@ -8,7 +8,7 @@
             <img [src]="userService.resolveAvatarUrl(currentUser()?.foto)"
                  [alt]="currentUser()?.nomeUsuario"
                  (error)="imageError = true"
-                 class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl object-cover border-2 border-slate-700/80 shadow-lg shadow-blue-500/10 group-hover:border-blue-500/50 transition-all group-hover:scale-105" />
+                 class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl object-cover avatar-crisp border-2 border-slate-700/80 shadow-lg shadow-blue-500/10 group-hover:border-blue-500/50 transition-all group-hover:scale-105" />
           } @else {
             <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-black text-xl sm:text-2xl flex items-center justify-center shadow-lg shadow-blue-500/10 group-hover:scale-105 transition-all">
               {{ userInitials }}
