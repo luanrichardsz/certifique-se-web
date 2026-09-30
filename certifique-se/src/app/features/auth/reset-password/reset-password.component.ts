@@ -22,6 +22,8 @@ export class ResetPasswordComponent implements OnInit {
   });
 
   isLoading = false;
+  showNovaSenha = false;
+  showConfirmarSenha = false;
   errorMessage: string | null = null;
   successMessage: string | null = null;
 

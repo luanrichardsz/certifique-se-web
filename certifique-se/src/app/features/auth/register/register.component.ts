@@ -24,6 +24,7 @@ export class RegisterComponent {
   });
 
   isLoading = false;
+  showPassword = false;
   errorMessage: string | null = null;
 
   onSubmit(): void {

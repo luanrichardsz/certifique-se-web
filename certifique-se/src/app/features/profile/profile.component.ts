@@ -56,10 +56,14 @@ export class ProfileComponent implements OnInit {
   cropImageSource: string | null = null;
 
   isChangingPassword = false;
+  showSenhaAtual = false;
+  showNovaSenha = false;
+  showConfirmarSenha = false;
   passwordSuccess: string | null = null;
   passwordError: string | null = null;
 
   isDeletingAccount = false;
+  showDeleteSenhaAtual = false;
   deleteError: string | null = null;
   showDeleteConfirm = false;
 
