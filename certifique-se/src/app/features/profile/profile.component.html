@@ -260,8 +260,11 @@
       }
 
       @if (passwordError) {
-        <div class="rounded-xl bg-red-500/10 border border-red-500/20 p-4 text-xs sm:text-sm text-red-400">
-          {{ passwordError }}
+        <div class="rounded-xl bg-red-500/10 border border-red-500/20 p-4 text-xs sm:text-sm text-red-400 flex items-center gap-2.5">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8"/><line x1="12" x2="12.01" y1="12"/>
+          </svg>
+          <span>{{ passwordError }}</span>
         </div>
       }
 
@@ -290,11 +293,17 @@
               }
             </button>
           </div>
+          @if (passwordForm.get('senhaAtual')?.touched && passwordForm.get('senhaAtual')?.invalid) {
+            <p class="text-xs text-red-400 mt-1.5">Informe sua senha atual</p>
+          }
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label for="novaSenha" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Nova Senha</label>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="novaSenha" class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Nova Senha</label>
+              <span class="text-[11px] text-slate-500 font-medium">Mínimo de 6 caracteres</span>
+            </div>
             <div class="relative">
               <input id="novaSenha" [type]="showNovaSenha ? 'text' : 'password'" formControlName="novaSenha" placeholder="Mínimo de 6 caracteres"
                      class="w-full pl-4 pr-11 py-2.5 sm:py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
@@ -317,6 +326,9 @@
                 }
               </button>
             </div>
+            @if (passwordForm.get('novaSenha')?.touched && passwordForm.get('novaSenha')?.invalid) {
+              <p class="text-xs text-red-400 mt-1.5">A senha deve ter pelo menos 6 caracteres</p>
+            }
           </div>
 
           <div>
@@ -343,6 +355,13 @@
                 }
               </button>
             </div>
+            @if (passwordForm.get('confirmarSenha')?.touched) {
+              @if (passwordForm.get('confirmarSenha')?.hasError('required')) {
+                <p class="text-xs text-red-400 mt-1.5">Confirme a nova senha</p>
+              } @else if (passwordForm.get('novaSenha')?.value && passwordForm.get('confirmarSenha')?.value && passwordForm.get('novaSenha')?.value !== passwordForm.get('confirmarSenha')?.value) {
+                <p class="text-xs text-red-400 mt-1.5">As senhas não coincidem</p>
+              }
+            }
           </div>
         </div>
 

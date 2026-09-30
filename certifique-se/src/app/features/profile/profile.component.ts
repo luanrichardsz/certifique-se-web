@@ -228,8 +228,22 @@ export class ProfileComponent implements OnInit {
   }
 
   onChangePassword(): void {
+    this.passwordSuccess = null;
+    this.passwordError = null;
+
     if (this.passwordForm.invalid) {
       this.passwordForm.markAllAsTouched();
+      if (this.passwordForm.get("novaSenha")?.hasError("minlength")) {
+        this.passwordError = "A nova senha deve ter pelo menos 6 caracteres.";
+      } else if (this.passwordForm.get("novaSenha")?.hasError("required")) {
+        this.passwordError = "Por favor, preencha a nova senha.";
+      } else if (this.passwordForm.get("senhaAtual")?.invalid) {
+        this.passwordError = "Por favor, informe sua senha atual.";
+      } else if (this.passwordForm.get("confirmarSenha")?.invalid) {
+        this.passwordError = "Por favor, confirme a nova senha.";
+      } else {
+        this.passwordError = "Por favor, preencha os campos de senha corretamente.";
+      }
       return;
     }
 
@@ -240,15 +254,16 @@ export class ProfileComponent implements OnInit {
     }
 
     this.isChangingPassword = true;
-    this.passwordSuccess = null;
-    this.passwordError = null;
 
     this.userService.changePassword({ senhaAtual, novaSenha }).subscribe({
       next: () => {
         this.isChangingPassword = false;
         this.passwordSuccess = "Senha alterada com sucesso!";
         this.passwordForm.reset();
-        setTimeout(() => (this.passwordSuccess = null), 3000);
+        this.showSenhaAtual = false;
+        this.showNovaSenha = false;
+        this.showConfirmarSenha = false;
+        setTimeout(() => (this.passwordSuccess = null), 4000);
       },
       error: (err) => {
         this.isChangingPassword = false;
