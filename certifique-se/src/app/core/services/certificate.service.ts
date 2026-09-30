@@ -2,7 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../../environments/environment";
-import { Certificate, CertificateRequestDTO, CertificateUpdateDTO, CertificateFilterDTO } from "../models/certificate.model";
+import { Certificate, CertificateRequestDTO, CertificateUpdateDTO, CertificateFilterDTO, CertificadoExtracaoResponse } from "../models/certificate.model";
 
 @Injectable({
   providedIn: "root"
@@ -55,6 +55,14 @@ export class CertificateService {
       return `${environment.apiUrl}${url}`;
     }
     return `${environment.apiUrl}/${url}`;
+  }
+
+  extrairDadosIA(fileOrFormData: File | FormData): Observable<CertificadoExtracaoResponse> {
+    const formData = fileOrFormData instanceof FormData ? fileOrFormData : new FormData();
+    if (fileOrFormData instanceof File) {
+      formData.append("arquivo", fileOrFormData);
+    }
+    return this.http.post<CertificadoExtracaoResponse>(`${environment.apiUrl}/certificados/extrair-dados`, formData);
   }
 
   deleteCertificate(hash: string): Observable<void> {
