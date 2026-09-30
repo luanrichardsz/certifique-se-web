@@ -42,3 +42,15 @@ export interface CertificateFilterDTO {
   dataConclusao?: string;
   tags?: string;
 }
+
+export interface CertificadoExtracaoResponse {
+  nome?: string | null;
+  empresa?: string | null;
+  dataConclusao?: string | null;
+  cargaHoraria?: number | null;
+  tags: string[];
+  descricao?: string | null;
+  linkValidacao?: string | null;
+  fotoChave?: string;
+  fotoUrl?: string;
+}
