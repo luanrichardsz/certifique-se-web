@@ -13,6 +13,9 @@ function pastOrPresentDateValidator(control: AbstractControl): ValidationErrors 
   if (control.value > today) {
     return { futureDate: true };
   }
+  if (control.value < "1960-01-01") {
+    return { minDate: true };
+  }
   return null;
 }
 
@@ -24,6 +27,7 @@ function pastOrPresentDateValidator(control: AbstractControl): ValidationErrors 
   styleUrl: "./certificate-edit.component.css"
 })
 export class CertificateEditComponent implements OnInit {
+  readonly minDate: string = "1960-01-01";
   readonly maxDate: string = new Date().toISOString().split("T")[0];
   private fb = inject(FormBuilder);
   private certificateService = inject(CertificateService);
@@ -242,8 +246,9 @@ export class CertificateEditComponent implements OnInit {
     };
 
     this.certificateService.updateCertificate(this.hashCertificado, payload).subscribe({
-      next: () => {
-        this.router.navigate(["/certificados", this.hashCertificado]);
+      next: (res) => {
+        const targetHash = res?.hashCertificado || this.hashCertificado;
+        this.router.navigate(["/certificados", targetHash]);
       },
       error: (err) => {
         this.isSaving = false;
