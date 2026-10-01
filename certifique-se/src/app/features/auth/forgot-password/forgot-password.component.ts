@@ -32,14 +32,19 @@ export class ForgotPasswordComponent {
     this.errorMessage = null;
 
     this.authService.forgotPassword(this.form.value.email).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.isLoading = false;
-        this.successMessage = "Se o e-mail estiver cadastrado, enviamos as instruções para recuperação da sua senha.";
+        this.successMessage = res?.mensagem || "E-mail de recuperação enviado com sucesso! Verifique sua caixa de entrada.";
       },
-      error: () => {
+      error: (err: any) => {
         this.isLoading = false;
-        // Even on error, standard security practice is generic message or friendly prompt
-        this.successMessage = "Se o e-mail estiver cadastrado, enviamos as instruções para recuperação da sua senha.";
+        if (err.status === 404) {
+          this.errorMessage = err.error?.detail || err.error?.mensagem || "Este e-mail não foi encontrado em nosso sistema.";
+        } else if (err.status === 0) {
+          this.errorMessage = "Falha de conexão com o servidor. Verifique sua conexão e tente novamente.";
+        } else {
+          this.errorMessage = err.error?.detail || err.error?.mensagem || "Erro ao solicitar recuperação de senha. Tente novamente.";
+        }
       }
     });
   }
