@@ -259,10 +259,14 @@
 
         <div>
           <label for="dataConclusao" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Data de Conclusão *</label>
-          <input id="dataConclusao" type="date" formControlName="dataConclusao"
+          <input id="dataConclusao" type="date" formControlName="dataConclusao" [max]="maxDate"
                  class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 [color-scheme:dark]" />
           @if (certificateForm.get("dataConclusao")?.touched && certificateForm.get("dataConclusao")?.invalid) {
-            <p class="text-xs text-red-400 mt-1">A data de conclusão é obrigatória</p>
+            @if (certificateForm.get("dataConclusao")?.hasError("futureDate")) {
+              <p class="text-xs text-red-400 mt-1">A data de conclusão não pode ultrapassar a data atual</p>
+            } @else {
+              <p class="text-xs text-red-400 mt-1">A data de conclusão é obrigatória</p>
+            }
           }
         </div>
 

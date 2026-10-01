@@ -1,10 +1,19 @@
 import { Component, inject } from "@angular/core";
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import { CertificateService } from "../../../core/services/certificate.service";
 import { PdfThumbnailService } from "../../../core/services/pdf-thumbnail.service";
 import { CertificateRequestDTO } from "../../../core/models/certificate.model";
 import { CommonModule } from "@angular/common";
+
+function pastOrPresentDateValidator(control: AbstractControl): ValidationErrors | null {
+  if (!control.value) return null;
+  const today = new Date().toISOString().split("T")[0];
+  if (control.value > today) {
+    return { futureDate: true };
+  }
+  return null;
+}
 
 @Component({
   selector: "app-certificate-new",
@@ -14,6 +23,7 @@ import { CommonModule } from "@angular/common";
   styleUrl: "./certificate-new.component.css"
 })
 export class CertificateNewComponent {
+  readonly maxDate: string = new Date().toISOString().split("T")[0];
   private fb = inject(FormBuilder);
   private certificateService = inject(CertificateService);
   private pdfThumbnailService = inject(PdfThumbnailService);
@@ -22,7 +32,7 @@ export class CertificateNewComponent {
   certificateForm: FormGroup = this.fb.group({
     nome: ["", [Validators.required, Validators.maxLength(150)]],
     empresa: ["", [Validators.required, Validators.maxLength(150)]],
-    dataConclusao: ["", [Validators.required]],
+    dataConclusao: ["", [Validators.required, pastOrPresentDateValidator]],
     cargaHoraria: [null, [Validators.min(1)]],
     linkValidacao: ["", [Validators.maxLength(500)]],
     foto: ["", [Validators.required]],
