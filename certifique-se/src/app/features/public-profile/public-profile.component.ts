@@ -56,10 +56,10 @@ export class PublicProfileComponent implements OnInit {
         const q = this.searchQuery.toLowerCase();
         const matchesName = cert.nome.toLowerCase().includes(q);
         const matchesEmpresa = cert.empresa.toLowerCase().includes(q);
-        const matchesTag = cert.tags.some((t) => t.toLowerCase().includes(q));
+        const matchesTag = (cert.tags || []).some((t) => t.toLowerCase().includes(q));
         if (!matchesName && !matchesEmpresa && !matchesTag) return false;
       }
-      if (this.selectedTag && !cert.tags.includes(this.selectedTag)) {
+      if (this.selectedTag && !(cert.tags || []).includes(this.selectedTag)) {
         return false;
       }
       return true;
@@ -98,7 +98,7 @@ export class PublicProfileComponent implements OnInit {
           nome: c.nome,
           empresa: c.empresa,
           dataConclusao: c.dataConclusao,
-          tags: c.tags,
+          tags: c.tags || [],
           cargaHoraria: c.cargaHoraria,
           descricao: c.descricao,
           linkValidacao: c.linkValidacao,
