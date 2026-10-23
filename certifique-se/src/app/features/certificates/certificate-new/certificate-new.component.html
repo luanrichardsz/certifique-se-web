@@ -3,16 +3,16 @@
 <!-- Congela a tela enquanto a IA processa o documento          -->
 <!-- ============================================================ -->
 @if (isExtractingAi) {
-  <div class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex flex-col items-center justify-center p-4 select-none pointer-events-auto animate-fade-in">
-    <div class="max-w-md w-full rounded-3xl bg-slate-900/95 border border-blue-500/40 shadow-2xl shadow-blue-500/20 p-8 flex flex-col items-center text-center relative overflow-hidden">
+  <div class="fixed inset-0 z-50 bg-slate-950/85 flex flex-col items-center justify-center p-4 select-none pointer-events-auto animate-fade-in">
+    <div class="max-w-md w-full rounded-3xl bg-slate-900/95 border border-blue-500/40 p-8 flex flex-col items-center text-center relative overflow-hidden">
       <!-- Glow ambient background -->
       <div class="absolute -top-24 -left-24 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
       <!-- Animated AI Icon -->
       <div class="relative w-20 h-20 mb-6 flex items-center justify-center">
-        <div class="absolute inset-0 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-500 animate-pulse opacity-75 blur-md"></div>
-        <div class="relative w-16 h-16 rounded-2xl bg-slate-950 border border-blue-400/50 flex items-center justify-center shadow-inner">
+        <div class="absolute inset-0 rounded-2xl bg-blue-600 animate-pulse opacity-75 blur-md"></div>
+        <div class="relative w-16 h-16 rounded-2xl bg-slate-950 border border-blue-400/50 flex items-center justify-center">
           <svg class="w-8 h-8 text-blue-400 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
@@ -30,9 +30,9 @@
 
       <!-- Progress bar -->
       <div class="w-full bg-slate-800/80 rounded-full h-1.5 overflow-hidden relative">
-        <div class="bg-gradient-to-r from-blue-500 via-indigo-400 to-blue-500 h-full rounded-full animate-progress w-full"></div>
+        <div class="bg-blue-600 h-full rounded-full animate-progress w-full"></div>
       </div>
-      <span class="text-[11px] text-slate-400 mt-3 font-medium">Aguarde alguns instantes</span>
+      <span class="text-xs text-slate-400 mt-3 font-medium">Aguarde alguns instantes</span>
     </div>
   </div>
 }
@@ -57,11 +57,11 @@
                 class="flex flex-col items-center gap-1.5 flex-1 group"
                 [class.cursor-pointer]="i + 1 < mobileStep"
                 [class.cursor-default]="i + 1 >= mobileStep">
-          <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all"
+          <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition"
                [ngClass]="{
-                 'bg-blue-600 text-white shadow-lg shadow-blue-500/30': mobileStep === i + 1,
+                 'bg-blue-600 text-white  ': mobileStep === i + 1,
                  'bg-blue-500/20 text-blue-400': mobileStep > i + 1,
-                 'bg-slate-800 text-slate-500': mobileStep < i + 1
+                 'bg-slate-800 text-slate-400': mobileStep < i + 1
                }">
             @if (mobileStep > i + 1) {
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -71,15 +71,15 @@
               {{ i + 1 }}
             }
           </div>
-          <span class="text-[10px] font-semibold uppercase tracking-wider"
+          <span class="text-sm font-semibold"
                 [class.text-blue-400]="mobileStep >= i + 1"
                 [class.text-slate-500]="mobileStep < i + 1">
             {{ label }}
           </span>
         </button>
         @if (i < stepLabels.length - 1) {
-          <div class="flex-1 h-px mx-1 mt-[-18px]"
-               [ngClass]="mobileStep > i + 1 ? 'bg-blue-500/40' : 'bg-slate-800'">
+          <div class="flex-1 h-1 rounded-full mx-1.5 mt-[-18px]"
+               [ngClass]="mobileStep > i + 1 ? 'bg-blue-600' : 'bg-slate-800'">
           </div>
         }
       }
@@ -116,10 +116,10 @@
     <!-- STEP 1 (NOVA ORDEM - Requisito 4.4): Comprovante & Upload     -->
     <!-- A área de adicionar o certificado fica em PRIMEIRO            -->
     <!-- ============================================================ -->
-    <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 sm:p-8 backdrop-blur-xl space-y-6"
+    <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 sm:p-8 space-y-6"
          [class.hidden]="mobileStep !== 1"
          [class.md:block]="true">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2">
         <div>
           <h2 class="text-lg font-bold text-white flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
@@ -127,7 +127,7 @@
           </h2>
           <p class="text-xs text-slate-400 mt-1">Anexe o arquivo (imagem ou PDF). A IA extrairá as informações automaticamente.</p>
         </div>
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 self-start sm:self-auto">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 self-start sm:self-auto">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
           </svg>
@@ -136,11 +136,11 @@
       </div>
 
       <div>
-        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Selecione o arquivo do certificado *</label>
+        <label class="block text-sm font-semibold text-slate-400 mb-2">Selecione o arquivo do certificado *</label>
         
         <div class="space-y-4">
           <div>
-            <div class="relative border-2 border-dashed border-slate-700/80 hover:border-blue-500/60 rounded-2xl p-6 transition-all text-center bg-slate-950/40">
+            <div class="relative border-2 border-dashed border-slate-700/80 hover:border-blue-500/60 rounded-2xl p-6 transition text-center bg-slate-950/40">
               <input type="file" (change)="onFileSelected($event)" accept="image/png, image/jpeg, image/webp, application/pdf"
                      class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
               <div class="flex flex-col items-center justify-center pointer-events-none">
@@ -178,8 +178,8 @@
             }
 
             <!-- URL opcional de imagem caso prefira colar link -->
-            <div class="mt-4 pt-3 border-t border-slate-800/80">
-              <label for="foto" class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
+            <div class="mt-4 pt-1">
+              <label for="foto" class="block text-sm font-semibold text-slate-400 mb-1.5">
                 Ou cole a URL direta da imagem do certificado:
               </label>
               <input id="foto" type="text" formControlName="foto" (input)="onFotoUrlChange()" placeholder="https://..."
@@ -206,7 +206,7 @@
                   </svg>
                 </div>
                 <span class="text-xs font-semibold text-slate-200">Certificado em PDF</span>
-                <span class="text-[10px] text-slate-500 mt-0.5">Gerando capa do PDF...</span>
+                <span class="text-xs text-slate-400 mt-0.5">Gerando capa do PDF...</span>
               </div>
             } @else {
               <div class="flex flex-col items-center justify-center text-slate-600 gap-1.5 p-4 text-center">
@@ -227,12 +227,12 @@
     <!-- STEP 2 (Requisito 4.4): Informações Principais                 -->
     <!-- Usuário valida os dados preenchidos pela IA (Modo Híbrido)   -->
     <!-- ============================================================ -->
-    <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 sm:p-8 backdrop-blur-xl space-y-6"
+    <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 sm:p-8 space-y-6"
          [class.hidden]="mobileStep !== 2"
          [class.md:block]="true">
-      <div class="border-b border-slate-800/80 pb-4">
+      <div class="pb-2">
         <h2 class="text-lg font-bold text-white flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
           2. Dados do Certificado
         </h2>
         <p class="text-xs text-slate-400 mt-1">Confira os dados extraídos pela IA e edite o que for necessário.</p>
@@ -240,7 +240,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div class="md:col-span-2">
-          <label for="nome" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Nome do Curso / Certificação *</label>
+          <label for="nome" class="block text-sm font-semibold text-slate-400 mb-2">Nome do Curso / Certificação *</label>
           <input id="nome" type="text" formControlName="nome" placeholder="ex: Especialista Spring Boot 3 e Microserviços"
                  class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           @if (certificateForm.get("nome")?.touched && certificateForm.get("nome")?.invalid) {
@@ -249,7 +249,7 @@
         </div>
 
         <div>
-          <label for="empresa" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Instituição Emissora *</label>
+          <label for="empresa" class="block text-sm font-semibold text-slate-400 mb-2">Instituição Emissora *</label>
           <input id="empresa" type="text" formControlName="empresa" placeholder="ex: Alura, Coursera, Udemy, DIO, USP"
                  class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           @if (certificateForm.get("empresa")?.touched && certificateForm.get("empresa")?.invalid) {
@@ -258,7 +258,7 @@
         </div>
 
         <div>
-          <label for="dataConclusao" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Data de Conclusão *</label>
+          <label for="dataConclusao" class="block text-sm font-semibold text-slate-400 mb-2">Data de Conclusão *</label>
           <input id="dataConclusao" type="date" formControlName="dataConclusao" [min]="minDate" [max]="maxDate"
                  class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 [color-scheme:dark]" />
           @if (certificateForm.get("dataConclusao")?.touched && certificateForm.get("dataConclusao")?.invalid) {
@@ -273,9 +273,9 @@
         </div>
 
         <div>
-          <label for="cargaHoraria" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+          <label for="cargaHoraria" class="block text-sm font-semibold text-slate-400 mb-2">
             Carga Horária (horas)
-            <span class="text-slate-500 font-normal normal-case">(opcional)</span>
+            <span class="text-slate-400 font-normal normal-case">(opcional)</span>
           </label>
           <input id="cargaHoraria" type="number" formControlName="cargaHoraria" placeholder="ex: 40" min="1"
                  class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
@@ -286,10 +286,10 @@
     <!-- ============================================================ -->
     <!-- STEP 3: Detalhes, Categorização & Visibilidade                -->
     <!-- ============================================================ -->
-    <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 sm:p-8 backdrop-blur-xl space-y-6"
+    <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 sm:p-8 space-y-6"
          [class.hidden]="mobileStep !== 3"
          [class.md:block]="true">
-      <div class="border-b border-slate-800/80 pb-4">
+      <div class="pb-2">
         <h2 class="text-lg font-bold text-white flex items-center gap-2">
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
           3. Detalhes & Visibilidade
@@ -300,9 +300,9 @@
       <div class="space-y-5">
         <!-- Tags com Chips Interativos (Melhoria 1) -->
         <div>
-          <label for="tagInputRef" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+          <label for="tagInputRef" class="block text-sm font-semibold text-slate-400 mb-2">
             Tags de Categorização *
-            <span class="text-slate-500 font-normal normal-case">(digite e pressione Enter para adicionar)</span>
+            <span class="text-slate-400 font-normal normal-case">(digite e pressione Enter para adicionar)</span>
           </label>
           
           <div class="relative">
@@ -318,7 +318,7 @@
           <!-- Chips interativos de tags logo abaixo do input -->
           <div class="flex flex-wrap gap-2 mt-3 min-h-[32px] items-center">
             @for (tag of tags; track tag; let i = $index) {
-              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-blue-600/20 to-indigo-600/20 text-blue-300 border border-blue-500/30 transition-all hover:border-blue-400/50 shadow-sm animate-fade-in">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-blue-600/20 text-blue-300 border border-blue-500/30 transition hover:border-blue-400/50 animate-fade-in">
                 <span>#{{ tag }}</span>
                 <button type="button" (click)="removeTag(i)" class="text-blue-400 hover:text-white transition-colors ml-0.5 p-0.5 rounded-md hover:bg-blue-500/30" title="Remover tag">
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -340,32 +340,32 @@
         </div>
 
         <div>
-          <label for="linkValidacao" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+          <label for="linkValidacao" class="block text-sm font-semibold text-slate-400 mb-2">
             Link de Validação Externa
-            <span class="text-slate-500 font-normal normal-case">(opcional)</span>
+            <span class="text-slate-400 font-normal normal-case">(opcional)</span>
           </label>
           <input id="linkValidacao" type="url" formControlName="linkValidacao" placeholder="https://coursera.org/verify/..."
                  class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
 
         <div>
-          <label for="descricao" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+          <label for="descricao" class="block text-sm font-semibold text-slate-400 mb-2">
             Descrição / Ementa
-            <span class="text-slate-500 font-normal normal-case">(opcional)</span>
+            <span class="text-slate-400 font-normal normal-case">(opcional)</span>
           </label>
           <textarea id="descricao" formControlName="descricao" rows="3" placeholder="Resumo dos tópicos aprendidos, projetos desenvolvidos ou habilidades adquiridas..."
                     class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
         </div>
 
         <!-- Visibility Toggle -->
-        <div class="pt-4 border-t border-slate-800 flex items-center justify-between">
+        <div class="pt-4 flex items-center justify-between">
           <div>
             <p class="text-sm font-semibold text-white">Exibir no Portfólio Público</p>
             <p class="text-xs text-slate-400 mt-0.5">Quando ativado, este certificado aparecerá para quem acessar seu link público.</p>
           </div>
           <label class="relative inline-flex items-center cursor-pointer">
             <input type="checkbox" formControlName="publico" class="sr-only peer">
-            <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+            <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition peer-checked:bg-blue-600"></div>
           </label>
         </div>
       </div>
@@ -387,7 +387,7 @@
 
       @if (mobileStep < totalSteps) {
         <button type="button" (click)="nextStep()"
-                class="flex-1 py-3 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2 active:scale-[0.98]">
+                class="flex-1 py-3 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 transition flex items-center justify-center gap-2 active:scale-[0.98]">
           <span>Próximo</span>
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="m9 18 6-6-6-6"/>
@@ -395,7 +395,7 @@
         </button>
       } @else {
         <button type="submit" [disabled]="isLoading || isUploadingImage || isExtractingAi"
-                class="flex-1 py-3 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-lg shadow-blue-500/25 transition-all disabled:opacity-50 flex items-center justify-center gap-2 active:scale-[0.98]">
+                class="flex-1 py-3 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 transition disabled:opacity-50 flex items-center justify-center gap-2 active:scale-[0.98]">
           @if (isLoading) {
             <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -419,7 +419,7 @@
         Cancelar
       </a>
       <button type="submit" [disabled]="isLoading || isUploadingImage || isExtractingAi"
-              class="px-8 py-3 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-xl shadow-blue-500/25 transition-all disabled:opacity-50 flex items-center gap-2">
+              class="px-8 py-3 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 transition disabled:opacity-50 flex items-center gap-2">
         @if (isLoading) {
           <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

@@ -8,7 +8,7 @@
   <!-- Mobile Tab Switcher (visible < md) -->
   <div class="flex md:hidden p-1 rounded-2xl bg-slate-900 border border-slate-800">
     <button type="button" (click)="activeTab = 'perfil'"
-            class="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5"
+            class="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5"
             [class.bg-blue-600]="activeTab === 'perfil'"
             [class.text-white]="activeTab === 'perfil'"
             [class.shadow-md]="activeTab === 'perfil'"
@@ -19,7 +19,7 @@
       <span>Dados do Perfil</span>
     </button>
     <button type="button" (click)="activeTab = 'seguranca'"
-            class="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5"
+            class="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5"
             [class.bg-blue-600]="activeTab === 'seguranca'"
             [class.text-white]="activeTab === 'seguranca'"
             [class.shadow-md]="activeTab === 'seguranca'"
@@ -34,30 +34,30 @@
   <!-- SECTION 1: PERFIL (Avatar + Informações Pessoais) -->
   <div [class.hidden]="activeTab !== 'perfil'" class="md:!block space-y-6 sm:space-y-8">
     <!-- Profile Card & Public URL -->
-    <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-5 sm:p-8 backdrop-blur-xl space-y-5 sm:space-y-6">
+    <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-5 sm:p-8 space-y-5 sm:space-y-6">
       <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
         <!-- Avatar with Upload Button -->
         <div class="relative group flex-shrink-0">
-          <div class="w-24 h-24 sm:w-36 sm:h-36 rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-slate-700/80 shadow-xl shadow-blue-500/10 flex items-center justify-center bg-slate-800 relative">
+          <div class="w-24 h-24 sm:w-36 sm:h-36 rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-slate-700/80 flex items-center justify-center bg-slate-800 relative">
             @if (currentUser()?.foto && !avatarImageError) {
               <img [src]="userService.resolveAvatarUrl(currentUser()?.foto)"
                    [alt]="currentUser()?.nomeUsuario"
                    (error)="onAvatarError()"
                    class="w-full h-full object-cover avatar-crisp" />
             } @else {
-              <div class="w-full h-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-black text-2xl sm:text-5xl flex items-center justify-center">
+              <div class="w-full h-full bg-blue-600 text-white font-black text-2xl sm:text-5xl flex items-center justify-center">
                 {{ userInitials }}
               </div>
             }
 
             <!-- Overlay spinner when uploading -->
             @if (isUploadingPhoto) {
-              <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm flex flex-col items-center justify-center gap-1.5 text-blue-400">
+              <div class="absolute inset-0 bg-slate-950/80 flex flex-col items-center justify-center gap-1.5 text-blue-400">
                 <svg class="animate-spin w-5 h-5 sm:w-6 sm:h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <span class="text-[9px] sm:text-[10px] font-medium text-slate-300">Enviando...</span>
+                <span class="text-xs sm:text-[10px] font-medium text-slate-300">Enviando...</span>
               </div>
             }
           </div>
@@ -65,7 +65,7 @@
           <!-- Camera button overlay to trigger file upload -->
           <label for="avatar-input"
                  [class.pointer-events-none]="isUploadingPhoto"
-                 class="absolute -bottom-1 -right-1 p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/30 cursor-pointer transition-all hover:scale-110 active:scale-95 border-2 border-slate-900"
+                 class="absolute -bottom-1 -right-1 p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-blue-600 hover:bg-blue-500 text-white cursor-pointer transition hover:scale-110 active:scale-95 border-2 border-slate-900"
                  title="Alterar foto de perfil">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
@@ -122,8 +122,8 @@
 
           @if (currentUser()?.username) {
             <div class="mt-3 flex flex-wrap items-center justify-center sm:justify-start gap-2">
-              <span class="text-xs text-slate-500 font-mono">Link público:</span>
-              <a [routerLink]="['/u', currentUser()?.username]" target="_blank" class="text-xs font-mono font-semibold text-indigo-400 hover:text-indigo-300 underline break-all">
+              <span class="text-xs text-slate-400 tabular-nums">Link público:</span>
+              <a [routerLink]="['/u', currentUser()?.username]" target="_blank" class="text-xs tabular-nums font-semibold text-blue-400 hover:text-blue-300 underline break-all">
                 {{ publicProfileUrl }}
               </a>
               <button (click)="copyLink()" class="px-2 py-0.5 rounded text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors">
@@ -134,30 +134,30 @@
 
           <!-- Admin Quick Access Badge & Button -->
           @if (currentUser()?.role === 'ADMIN') {
-            <div class="mt-3.5 pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 p-3 rounded-2xl bg-purple-950/20 border border-purple-500/25">
+            <div class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 rounded-2xl bg-blue-950/20 border border-blue-500/25">
               <div class="flex items-center gap-2.5 text-center sm:text-left">
-                <div class="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 flex-shrink-0">
+                <div class="w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 flex-shrink-0">
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                   </svg>
                 </div>
                 <div>
                   <div class="flex items-center gap-1.5 justify-center sm:justify-start">
-                    <span class="text-xs font-bold text-purple-300">Acesso Administrativo</span>
-                    <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/30">ADMIN</span>
+                    <span class="text-xs font-bold text-blue-300">Acesso Administrativo</span>
+                    <span class="px-1.5 py-0.2 rounded-md text-sm font-black bg-blue-500/20 text-blue-300 border border-blue-500/30">ADMIN</span>
                   </div>
-                  <p class="text-[11px] text-slate-400">Controle geral da plataforma e gestão de usuários.</p>
+                  <p class="text-xs text-slate-400">Controle geral da plataforma e gestão de usuários.</p>
                 </div>
               </div>
 
               <a
                 routerLink="/admin"
-                class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-md shadow-purple-600/20 transition-all hover:scale-[1.02] active:scale-95 flex-shrink-0">
+                class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 transition hover:scale-[1.02] active:scale-95 flex-shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
                 </svg>
                 <span>Painel do Administrador</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-purple-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-blue-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="m9 18 6-6-6-6"/>
                 </svg>
               </a>
@@ -168,7 +168,7 @@
     </div>
 
     <!-- Edit Profile Form -->
-    <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-5 sm:p-8 backdrop-blur-xl space-y-5 sm:space-y-6">
+    <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-5 sm:p-8 space-y-5 sm:space-y-6">
       <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
         <span class="w-2 h-2 rounded-full bg-blue-500"></span>
         Informações do Perfil
@@ -189,54 +189,54 @@
       <form [formGroup]="profileForm" (ngSubmit)="onSaveProfile()" class="space-y-4">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label for="nomeUsuario" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Nome Completo *</label>
+            <label for="nomeUsuario" class="block text-sm font-semibold text-slate-400 mb-1.5">Nome Completo *</label>
             <input id="nomeUsuario" type="text" formControlName="nomeUsuario"
                    class="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
 
           <div>
-            <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">E-mail *</label>
+            <label for="email" class="block text-sm font-semibold text-slate-400 mb-1.5">E-mail *</label>
             <input id="email" type="email" formControlName="email"
                    class="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
 
           <div>
-            <label for="username" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Username do Portfólio</label>
+            <label for="username" class="block text-sm font-semibold text-slate-400 mb-1.5">Username do Portfólio</label>
             <div class="relative">
-              <span class="absolute left-3.5 top-2.5 sm:top-3.5 text-slate-500 text-xs sm:text-sm font-mono">&#64;</span>
+              <span class="absolute left-3.5 top-2.5 sm:top-3.5 text-slate-400 text-xs sm:text-sm tabular-nums">&#64;</span>
               <input id="username" type="text" formControlName="username"
-                     class="w-full pl-9 pr-4 py-2.5 sm:py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                     class="w-full pl-9 pr-4 py-2.5 sm:py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-xs sm:text-sm tabular-nums focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
 
           <div>
-            <label for="headline" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Título / Cargo Profissional</label>
+            <label for="headline" class="block text-sm font-semibold text-slate-400 mb-1.5">Título / Cargo Profissional</label>
             <input id="headline" type="text" formControlName="headline" placeholder="ex: Desenvolvedor Full Stack"
                    class="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
 
           <div class="sm:col-span-2">
-            <label for="biografia" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Biografia / Apresentação</label>
+            <label for="biografia" class="block text-sm font-semibold text-slate-400 mb-1.5">Biografia / Apresentação</label>
             <textarea id="biografia" formControlName="biografia" rows="3" placeholder="Fale um pouco sobre sua trajetória, formação e objetivos..."
                       class="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
           </div>
         </div>
 
         <!-- Public profile visibility toggle -->
-        <div class="pt-4 border-t border-slate-800 flex items-center justify-between gap-4">
+        <div class="pt-4 flex items-center justify-between gap-4">
           <div>
             <p class="text-xs sm:text-sm font-semibold text-white">Ativar Portfólio Público</p>
-            <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Se desativado, o link /u/{{ currentUser()?.username }} não será visível para terceiros.</p>
+            <p class="text-xs sm:text-xs text-slate-400 mt-0.5">Se desativado, o link /u/{{ currentUser()?.username }} não será visível para terceiros.</p>
           </div>
           <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
             <input type="checkbox" formControlName="perfilPublico" class="sr-only peer">
-            <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+            <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition peer-checked:bg-blue-600"></div>
           </label>
         </div>
 
         <div class="flex justify-end pt-2">
           <button type="submit" [disabled]="isSavingProfile"
-                  class="w-full sm:w-auto px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 transition-all disabled:opacity-50">
+                  class="w-full sm:w-auto px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 transition disabled:opacity-50">
             {{ isSavingProfile ? "Salvando..." : "Salvar Dados do Perfil" }}
           </button>
         </div>
@@ -247,9 +247,9 @@
   <!-- SECTION 2: SEGURANÇA (Alterar Senha + Zona de Perigo) -->
   <div [class.hidden]="activeTab !== 'seguranca'" class="md:!block space-y-6 sm:space-y-8">
     <!-- Change Password Form -->
-    <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-5 sm:p-8 backdrop-blur-xl space-y-5 sm:space-y-6">
+    <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-5 sm:p-8 space-y-5 sm:space-y-6">
       <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
         Alterar Senha
       </h2>
 
@@ -270,7 +270,7 @@
 
       <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()" class="space-y-4">
         <div>
-          <label for="senhaAtual" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Senha Atual</label>
+          <label for="senhaAtual" class="block text-sm font-semibold text-slate-400 mb-1.5">Senha Atual</label>
           <div class="relative">
             <input id="senhaAtual" [type]="showSenhaAtual ? 'text' : 'password'" formControlName="senhaAtual" placeholder="••••••••"
                    class="w-full pl-4 pr-11 py-2.5 sm:py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
@@ -301,8 +301,8 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <div class="flex items-center justify-between mb-1.5">
-              <label for="novaSenha" class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Nova Senha</label>
-              <span class="text-[11px] text-slate-500 font-medium">Mínimo de 6 caracteres</span>
+              <label for="novaSenha" class="block text-sm font-semibold text-slate-400">Nova Senha</label>
+              <span class="text-xs text-slate-400 font-medium">Mínimo de 6 caracteres</span>
             </div>
             <div class="relative">
               <input id="novaSenha" [type]="showNovaSenha ? 'text' : 'password'" formControlName="novaSenha" placeholder="Mínimo de 6 caracteres"
@@ -332,7 +332,7 @@
           </div>
 
           <div>
-            <label for="confirmarSenha" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Confirmar Nova Senha</label>
+            <label for="confirmarSenha" class="block text-sm font-semibold text-slate-400 mb-1.5">Confirmar Nova Senha</label>
             <div class="relative">
               <input id="confirmarSenha" [type]="showConfirmarSenha ? 'text' : 'password'" formControlName="confirmarSenha" placeholder="Repita a nova senha"
                      class="w-full pl-4 pr-11 py-2.5 sm:py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
@@ -367,7 +367,7 @@
 
         <div class="flex justify-end pt-2">
           <button type="submit" [disabled]="isChangingPassword"
-                  class="w-full sm:w-auto px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-500 transition-all disabled:opacity-50">
+                  class="w-full sm:w-auto px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 transition disabled:opacity-50">
             {{ isChangingPassword ? "Alterando..." : "Alterar Senha" }}
           </button>
         </div>
@@ -375,7 +375,7 @@
     </div>
 
     <!-- Danger Zone: Delete Account -->
-    <div class="rounded-3xl bg-red-950/20 border border-red-900/40 p-5 sm:p-8 backdrop-blur-xl space-y-4">
+    <div class="rounded-3xl bg-red-950/20 border border-red-900/40 p-5 sm:p-8 space-y-4">
       <h2 class="text-base sm:text-lg font-bold text-red-400">Zona de Perigo</h2>
       <p class="text-xs sm:text-sm text-slate-400">
         Ao excluir sua conta, todos os seus certificados, imagens e dados serão permanentemente apagados dos nossos servidores.
@@ -383,7 +383,7 @@
 
       @if (!showDeleteConfirm) {
         <button (click)="showDeleteConfirm = true"
-                class="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-bold text-red-400 hover:text-white hover:bg-red-600/80 border border-red-500/30 transition-all">
+                class="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-bold text-red-400 hover:text-white hover:bg-red-600/80 border border-red-500/30 transition">
           Quero excluir minha conta
         </button>
       } @else {
@@ -418,7 +418,7 @@
               </button>
             </div>
             <button type="submit" [disabled]="isDeletingAccount"
-                    class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-500 transition-all disabled:opacity-50">
+                    class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-500 transition disabled:opacity-50">
               {{ isDeletingAccount ? "Excluindo..." : "Confirmar Exclusão Definitiva" }}
             </button>
             <button type="button" (click)="showDeleteConfirm = false"

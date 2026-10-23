@@ -18,11 +18,11 @@
                 class="flex flex-col items-center gap-1.5 flex-1 group"
                 [class.cursor-pointer]="i + 1 < mobileStep"
                 [class.cursor-default]="i + 1 >= mobileStep">
-          <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all"
+          <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition"
                [ngClass]="{
-                 'bg-blue-600 text-white shadow-lg shadow-blue-500/30': mobileStep === i + 1,
+                 'bg-blue-600 text-white  ': mobileStep === i + 1,
                  'bg-blue-500/20 text-blue-400': mobileStep > i + 1,
-                 'bg-slate-800 text-slate-500': mobileStep < i + 1
+                 'bg-slate-800 text-slate-400': mobileStep < i + 1
                }">
             @if (mobileStep > i + 1) {
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -32,15 +32,15 @@
               {{ i + 1 }}
             }
           </div>
-          <span class="text-[10px] font-semibold uppercase tracking-wider"
+          <span class="text-sm font-semibold"
                 [class.text-blue-400]="mobileStep >= i + 1"
                 [class.text-slate-500]="mobileStep < i + 1">
             {{ label }}
           </span>
         </button>
         @if (i < stepLabels.length - 1) {
-          <div class="flex-1 h-px mx-1 mt-[-18px]"
-               [ngClass]="mobileStep > i + 1 ? 'bg-blue-500/40' : 'bg-slate-800'">
+          <div class="flex-1 h-1 rounded-full mx-1.5 mt-[-18px]"
+               [ngClass]="mobileStep > i + 1 ? 'bg-blue-600' : 'bg-slate-800'">
           </div>
         }
       }
@@ -60,7 +60,7 @@
     <form [formGroup]="certificateForm" (ngSubmit)="onSubmit()" class="space-y-6">
 
       <!-- STEP 1: Dados Principais -->
-      <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 sm:p-8 backdrop-blur-xl space-y-6"
+      <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 sm:p-8 space-y-6"
            [class.hidden]="mobileStep !== 1"
            [class.md:block]="true">
         <h2 class="text-lg font-bold text-white flex items-center gap-2">
@@ -70,19 +70,19 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div class="md:col-span-2">
-            <label for="nome" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Nome do Curso / Certificação *</label>
+            <label for="nome" class="block text-sm font-semibold text-slate-400 mb-2">Nome do Curso / Certificação *</label>
             <input id="nome" type="text" formControlName="nome"
                    class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
 
           <div>
-            <label for="empresa" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Instituição Emissora *</label>
+            <label for="empresa" class="block text-sm font-semibold text-slate-400 mb-2">Instituição Emissora *</label>
             <input id="empresa" type="text" formControlName="empresa"
                    class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
 
           <div>
-            <label for="dataConclusao" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Data de Conclusão *</label>
+            <label for="dataConclusao" class="block text-sm font-semibold text-slate-400 mb-2">Data de Conclusão *</label>
             <input id="dataConclusao" type="date" formControlName="dataConclusao" [min]="minDate" [max]="maxDate"
                    class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 [color-scheme:dark]" />
             @if (certificateForm.get("dataConclusao")?.touched && certificateForm.get("dataConclusao")?.invalid) {
@@ -97,7 +97,7 @@
           </div>
 
           <div>
-            <label for="cargaHoraria" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Carga Horária (horas)</label>
+            <label for="cargaHoraria" class="block text-sm font-semibold text-slate-400 mb-2">Carga Horária (horas)</label>
             <input id="cargaHoraria" type="number" formControlName="cargaHoraria" min="1"
                    class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
@@ -105,29 +105,29 @@
       </div>
 
       <!-- STEP 2: Detalhes -->
-      <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 sm:p-8 backdrop-blur-xl space-y-6"
+      <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 sm:p-8 space-y-6"
            [class.hidden]="mobileStep !== 2"
            [class.md:block]="true">
         <h2 class="text-lg font-bold text-white flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
           Detalhes & Categorização
         </h2>
 
         <div class="space-y-5">
           <div>
-            <label for="tagsInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Tags (separadas por vírgula) *</label>
+            <label for="tagsInput" class="block text-sm font-semibold text-slate-400 mb-2">Tags (separadas por vírgula) *</label>
             <input id="tagsInput" type="text" formControlName="tagsInput"
                    class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
 
           <div>
-            <label for="linkValidacao" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Link de Validação Externa</label>
+            <label for="linkValidacao" class="block text-sm font-semibold text-slate-400 mb-2">Link de Validação Externa</label>
             <input id="linkValidacao" type="url" formControlName="linkValidacao"
                    class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
 
           <div>
-            <label for="descricao" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Descrição / Ementa</label>
+            <label for="descricao" class="block text-sm font-semibold text-slate-400 mb-2">Descrição / Ementa</label>
             <textarea id="descricao" formControlName="descricao" rows="3"
                       class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
           </div>
@@ -135,7 +135,7 @@
       </div>
 
       <!-- STEP 3: Arquivo & Visibilidade -->
-      <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 sm:p-8 backdrop-blur-xl space-y-6"
+      <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 sm:p-8 space-y-6"
            [class.hidden]="mobileStep !== 3"
            [class.md:block]="true">
         <h2 class="text-lg font-bold text-white flex items-center gap-2">
@@ -145,7 +145,7 @@
 
         <div class="space-y-4">
           <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">URL da Imagem *</label>
+            <label class="block text-sm font-semibold text-slate-400 mb-2">URL da Imagem *</label>
             <input type="text" formControlName="foto" (input)="onFotoUrlChange()"
                    class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3" />
             <input type="file" (change)="onFileSelected($event)" accept="image/png, image/jpeg, image/webp, application/pdf"
@@ -182,7 +182,7 @@
                   </svg>
                 </div>
                 <span class="text-xs font-semibold text-slate-200">Certificado em PDF</span>
-                <span class="text-[10px] text-slate-500 mt-0.5">Gerando capa do PDF...</span>
+                <span class="text-xs text-slate-400 mt-0.5">Gerando capa do PDF...</span>
               </div>
             } @else {
               <span class="text-xs text-slate-600">Sem prévia</span>
@@ -190,14 +190,14 @@
           </div>
         </div>
 
-        <div class="pt-4 border-t border-slate-800 flex items-center justify-between">
+        <div class="pt-4 flex items-center justify-between">
           <div>
             <p class="text-sm font-semibold text-white">Exibir no Portfólio Público</p>
             <p class="text-xs text-slate-400 mt-0.5">Visível para visitantes que acessarem seu link público.</p>
           </div>
           <label class="relative inline-flex items-center cursor-pointer">
             <input type="checkbox" formControlName="publico" class="sr-only peer">
-            <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+            <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition peer-checked:bg-blue-600"></div>
           </label>
         </div>
       </div>
@@ -216,7 +216,7 @@
 
         @if (mobileStep < totalSteps) {
           <button type="button" (click)="nextStep()"
-                  class="flex-1 py-3 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2 active:scale-[0.98]">
+                  class="flex-1 py-3 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 transition flex items-center justify-center gap-2 active:scale-[0.98]">
             <span>Próximo</span>
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="m9 18 6-6-6-6"/>
@@ -224,7 +224,7 @@
           </button>
         } @else {
           <button type="submit" [disabled]="isSaving || isUploadingImage"
-                  class="flex-1 py-3 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-lg shadow-blue-500/25 transition-all disabled:opacity-50 flex items-center justify-center gap-2 active:scale-[0.98]">
+                  class="flex-1 py-3 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 transition disabled:opacity-50 flex items-center justify-center gap-2 active:scale-[0.98]">
             @if (isSaving) {
               <span>Salvando...</span>
             } @else if (isUploadingImage) {
@@ -242,7 +242,7 @@
           Cancelar
         </a>
         <button type="submit" [disabled]="isSaving || isUploadingImage"
-                class="px-8 py-3 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-xl shadow-blue-500/25 transition-all disabled:opacity-50 flex items-center gap-2">
+                class="px-8 py-3 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 transition disabled:opacity-50 flex items-center gap-2">
           @if (isSaving) {
             <span>Salvando...</span>
           } @else if (isUploadingImage) {

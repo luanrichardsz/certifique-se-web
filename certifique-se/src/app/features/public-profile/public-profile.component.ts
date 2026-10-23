@@ -45,6 +45,11 @@ export class PublicProfileComponent implements OnInit {
       .toUpperCase();
   }
 
+  cleanBio(text: string): string {
+    if (!text) return "";
+    return text.replace(/[\u{1F300}-\u{1FAFF}\u{2700}-\u{27BF}\u{2600}-\u{26FF}\u{FE00}-\u{FE0F}\u{1F900}-\u{1F9FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}]/gu, "").trim();
+  }
+
   get allTags(): string[] {
     const tags = this.certificates.flatMap((c) => c.tags || []);
     return Array.from(new Set(tags)).sort();
