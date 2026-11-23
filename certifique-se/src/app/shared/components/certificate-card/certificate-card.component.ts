@@ -23,6 +23,7 @@ export class CertificateCardComponent implements OnInit {
   @Input() isPublicView = false;
 
   @Output() delete = new EventEmitter<Certificate>();
+  @Output() viewPublicDetail = new EventEmitter<Certificate>();
 
   imageError = false;
   pdfThumbnailUrl: string | null = null;
@@ -103,6 +104,8 @@ export class CertificateCardComponent implements OnInit {
   openDetails(): void {
     if (!this.isPublicView) {
       this.router.navigate(["/certificados", this.certificate.hashCertificado]);
+    } else if (this.viewPublicDetail.observed) {
+      this.viewPublicDetail.emit(this.certificate);
     } else if (this.fotoUrl) {
       window.open(this.fotoUrl, "_blank", "noopener,noreferrer");
     }

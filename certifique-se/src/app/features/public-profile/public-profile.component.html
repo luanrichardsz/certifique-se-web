@@ -108,9 +108,95 @@
     } @else {
       <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @for (cert of filteredCertificates; track cert.hashCertificado) {
-          <app-certificate-card [certificate]="cert" [showActions]="false" [isPublicView]="true"></app-certificate-card>
+          <app-certificate-card
+            [certificate]="cert"
+            [showActions]="false"
+            [isPublicView]="true"
+            (viewPublicDetail)="openCertificateModal($event)">
+          </app-certificate-card>
         }
       </main>
     }
   }
 </div>
+
+<!-- Modal de Inspeção Detalhada do Certificado Público -->
+<app-modal [isOpen]="!!selectedCertificate" [title]="selectedCertificate?.nome || 'Detalhes do Certificado'" (close)="closeCertificateModal()">
+  @if (selectedCertificate) {
+    <div class="space-y-4">
+      <!-- Prévia da imagem ou PDF -->
+      <div class="relative rounded-xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center min-h-[180px] max-h-[300px]">
+        @if (isCertPdf(selectedCertificate)) {
+          @if (selectedCertPdfThumb) {
+            <img [src]="selectedCertPdfThumb" [alt]="selectedCertificate.nome" class="w-full h-auto max-h-[290px] object-contain certificate-crisp" />
+          } @else if (isLoadingSelectedPdf) {
+            <div class="p-8 text-center text-xs text-slate-400">Carregando prévia do PDF...</div>
+          } @else {
+            <div class="p-8 text-center text-xs text-slate-400">Certificado em formato PDF</div>
+          }
+        } @else if (selectedCertificate.foto) {
+          <img [src]="resolveCertUrl(selectedCertificate.foto)" [alt]="selectedCertificate.nome" class="w-full h-auto max-h-[290px] object-contain certificate-crisp" />
+        }
+      </div>
+
+      <!-- Metadados principais -->
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
+          <span class="text-slate-400 block mb-0.5">Instituição Emissora</span>
+          <span class="font-bold text-white">{{ selectedCertificate.empresa }}</span>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
+          <span class="text-slate-400 block mb-0.5">Data de Conclusão</span>
+          <span class="font-bold text-white tabular-nums">{{ formatCertDate(selectedCertificate.dataConclusao) }}</span>
+        </div>
+        @if (selectedCertificate.cargaHoraria) {
+          <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 col-span-2">
+            <span class="text-slate-400 block mb-0.5">Carga Horária</span>
+            <span class="font-bold text-blue-400 tabular-nums">{{ selectedCertificate.cargaHoraria }} horas</span>
+          </div>
+        }
+      </div>
+
+      <!-- Descrição completa -->
+      @if (selectedCertificate.descricao) {
+        <div class="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
+          <span class="text-xs font-semibold text-slate-400 block mb-1">Descrição e Competências</span>
+          <p class="text-xs text-slate-300 leading-relaxed whitespace-pre-line">{{ selectedCertificate.descricao }}</p>
+        </div>
+      }
+
+      <!-- Todas as Tags -->
+      @if (selectedCertificate.tags && selectedCertificate.tags.length > 0) {
+        <div class="flex flex-wrap gap-1.5">
+          @for (tag of selectedCertificate.tags; track tag) {
+            <span class="text-xs px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 border border-slate-700/60 font-medium">
+              #{{ tag }}
+            </span>
+          }
+        </div>
+      }
+
+      <!-- Botões de Ação -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2.5 pt-2">
+        @if (selectedCertificate.linkValidacao) {
+          <a [href]="selectedCertificate.linkValidacao" target="_blank" rel="noopener noreferrer"
+             class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/>
+            </svg>
+            <span>Verificar Autenticidade Oficial</span>
+          </a>
+        }
+        @if (selectedCertificate.foto) {
+          <a [href]="resolveCertUrl(selectedCertificate.foto)" target="_blank" rel="noopener noreferrer"
+             class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 transition">
+            <span>Abrir documento original</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            </svg>
+          </a>
+        }
+      </div>
+    </div>
+  }
+</app-modal>

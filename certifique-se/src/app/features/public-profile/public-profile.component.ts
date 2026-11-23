@@ -4,20 +4,25 @@ import { ActivatedRoute, RouterLink } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 import { PublicService } from "../../core/services/public.service";
 import { UserService } from "../../core/services/user.service";
-import { PublicProfile, PublicCertificate } from "../../core/models/public-profile.model";
+import { CertificateService } from "../../core/services/certificate.service";
+import { PdfThumbnailService } from "../../core/services/pdf-thumbnail.service";
+import { PublicProfile } from "../../core/models/public-profile.model";
 import { CertificateCardComponent } from "../../shared/components/certificate-card/certificate-card.component";
 import { Certificate } from "../../core/models/certificate.model";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
+import { ModalComponent } from "../../shared/components/modal/modal.component";
 
 @Component({
   selector: "app-public-profile",
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, CertificateCardComponent, EmptyStateComponent],
+  imports: [CommonModule, RouterLink, FormsModule, CertificateCardComponent, EmptyStateComponent, ModalComponent],
   templateUrl: "./public-profile.component.html",
   styleUrl: "./public-profile.component.css"
 })
 export class PublicProfileComponent implements OnInit {
   private publicService = inject(PublicService);
+  private certificateService = inject(CertificateService);
+  private pdfThumbnailService = inject(PdfThumbnailService);
   private route = inject(ActivatedRoute);
   userService = inject(UserService);
   imageError = false;
@@ -34,6 +39,11 @@ export class PublicProfileComponent implements OnInit {
   searchQuery = "";
   selectedTag = "";
   showFullBio = false;
+
+  // Modal de detalhes do certificado público
+  selectedCertificate: Certificate | null = null;
+  selectedCertPdfThumb: string | null = null;
+  isLoadingSelectedPdf = false;
 
   get userInitials(): string {
     if (!this.profile?.nomeUsuario) return "U";
@@ -115,5 +125,47 @@ export class PublicProfileComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  openCertificateModal(cert: Certificate): void {
+    this.selectedCertificate = cert;
+    this.selectedCertPdfThumb = null;
+    this.isLoadingSelectedPdf = false;
+
+    const fotoUrl = this.resolveCertUrl(cert.foto);
+    if (cert.foto && cert.foto.toLowerCase().includes(".pdf")) {
+      this.isLoadingSelectedPdf = true;
+      this.pdfThumbnailService.generateThumbnail(fotoUrl, 2.0)
+        .then((thumb) => {
+          this.selectedCertPdfThumb = thumb;
+          this.isLoadingSelectedPdf = false;
+        })
+        .catch(() => {
+          this.isLoadingSelectedPdf = false;
+        });
+    }
+  }
+
+  closeCertificateModal(): void {
+    this.selectedCertificate = null;
+    this.selectedCertPdfThumb = null;
+  }
+
+  resolveCertUrl(foto: string | null | undefined): string {
+    return this.certificateService.resolveImageUrl(foto);
+  }
+
+  isCertPdf(cert: Certificate | null): boolean {
+    return !!cert?.foto && cert.foto.toLowerCase().includes(".pdf");
+  }
+
+  formatCertDate(dateStr: string | null | undefined): string {
+    if (!dateStr) return "";
+    try {
+      const [year, month, day] = dateStr.split("-");
+      return `${day}/${month}/${year}`;
+    } catch {
+      return dateStr;
+    }
   }
 }
