@@ -5,11 +5,13 @@ import { CertificateService } from "../../../core/services/certificate.service";
 import { PdfThumbnailService } from "../../../core/services/pdf-thumbnail.service";
 import { Certificate } from "../../../core/models/certificate.model";
 import { BadgeComponent } from "../../../shared/components/badge/badge.component";
+import { ModalComponent } from "../../../shared/components/modal/modal.component";
+import { extractApiErrorMessage } from "../../../core/utils/api-error.util";
 
 @Component({
   selector: "app-certificate-detail",
   standalone: true,
-  imports: [CommonModule, RouterLink, BadgeComponent],
+  imports: [CommonModule, RouterLink, BadgeComponent, ModalComponent],
   templateUrl: "./certificate-detail.component.html",
   styleUrl: "./certificate-detail.component.css"
 })
@@ -22,13 +24,14 @@ export class CertificateDetailComponent implements OnInit {
   hashCertificado = "";
   certificate: Certificate | null = null;
   isLoading = true;
-  copiedHash = false;
+  loadError: string | null = null;
   pdfThumbnailUrl: string | null = null;
   isLoadingPdfThumb = false;
 
-  // Mobile accordion state
-  showHashSection = false;
-
+  // Delete Modal State
+  showDeleteModal = false;
+  isDeleting = false;
+  deleteError: string | null = null;
 
   get isPdf(): boolean {
     const url = this.certificate?.foto;
@@ -56,6 +59,7 @@ export class CertificateDetailComponent implements OnInit {
 
   loadCertificate(): void {
     this.isLoading = true;
+    this.loadError = null;
     this.certificateService.getMyCertificates().subscribe({
       next: (list) => {
         this.certificate = list.find((c) => c.hashCertificado === this.hashCertificado) || null;
@@ -74,27 +78,39 @@ export class CertificateDetailComponent implements OnInit {
             });
         }
       },
-      error: () => {
+      error: (err) => {
         this.isLoading = false;
+        this.loadError = extractApiErrorMessage(err, "Não foi possível carregar os detalhes do certificado.");
       }
     });
   }
 
-  copyHash(): void {
-    if (!this.certificate?.hashCertificado) return;
-    navigator.clipboard.writeText(this.certificate.hashCertificado);
-    this.copiedHash = true;
-    setTimeout(() => (this.copiedHash = false), 2000);
+  openDeleteModal(): void {
+    this.deleteError = null;
+    this.showDeleteModal = true;
   }
 
-  deleteCertificate(): void {
-    if (!this.certificate) return;
-    if (confirm(`Tem certeza que deseja excluir o certificado "${this.certificate.nome}"? Esta ação não pode ser desfeita.`)) {
-      this.certificateService.deleteCertificate(this.certificate.hashCertificado).subscribe({
-        next: () => {
-          this.router.navigate(["/certificados"]);
-        }
-      });
-    }
+  closeDeleteModal(): void {
+    if (this.isDeleting) return;
+    this.showDeleteModal = false;
+    this.deleteError = null;
+  }
+
+  confirmDeleteCertificate(): void {
+    if (!this.certificate || this.isDeleting) return;
+    this.isDeleting = true;
+    this.deleteError = null;
+
+    this.certificateService.deleteCertificate(this.certificate.hashCertificado).subscribe({
+      next: () => {
+        this.isDeleting = false;
+        this.showDeleteModal = false;
+        this.router.navigate(["/certificados"]);
+      },
+      error: (err) => {
+        this.isDeleting = false;
+        this.deleteError = extractApiErrorMessage(err, "Erro ao excluir certificado. Tente novamente.");
+      }
+    });
   }
 }
