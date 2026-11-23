@@ -67,7 +67,7 @@
       <div>
         <label for="senha" class="block text-sm font-semibold text-slate-400 mb-1.5">Senha</label>
         <div class="relative">
-          <input id="senha" [type]="showPassword ? 'text' : 'password'" formControlName="senha" placeholder="Mínimo de 6 caracteres"
+          <input id="senha" [type]="showPassword ? 'text' : 'password'" formControlName="senha" placeholder="Mínimo de 8 caracteres"
                  class="w-full pl-4 pr-11 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" />
           <button type="button"
                   (click)="showPassword = !showPassword"
@@ -88,8 +88,45 @@
             }
           </button>
         </div>
+
+        <!-- Barra de força e checklist de requisitos da senha -->
+        <div class="mt-2.5 p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-2">
+          <div class="flex gap-1.5">
+            @for (step of [1, 2, 3, 4, 5]; track step) {
+              <div class="h-1 flex-1 rounded-full transition-colors duration-200"
+                   [class.bg-emerald-500]="passwordChecks.passedCount >= step && passwordChecks.passedCount === 5"
+                   [class.bg-blue-500]="passwordChecks.passedCount >= step && passwordChecks.passedCount >= 3 && passwordChecks.passedCount < 5"
+                   [class.bg-amber-500]="passwordChecks.passedCount >= step && passwordChecks.passedCount < 3"
+                   [class.bg-slate-800]="passwordChecks.passedCount < step">
+              </div>
+            }
+          </div>
+          <ul class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">
+            <li class="flex items-center gap-1.5" [class.text-emerald-400]="passwordChecks.minLength" [class.text-slate-400]="!passwordChecks.minLength">
+              <span>{{ passwordChecks.minLength ? '✓' : '•' }}</span>
+              <span>Mínimo de 8 caracteres</span>
+            </li>
+            <li class="flex items-center gap-1.5" [class.text-emerald-400]="passwordChecks.hasUppercase" [class.text-slate-400]="!passwordChecks.hasUppercase">
+              <span>{{ passwordChecks.hasUppercase ? '✓' : '•' }}</span>
+              <span>1 letra maiúscula (A-Z)</span>
+            </li>
+            <li class="flex items-center gap-1.5" [class.text-emerald-400]="passwordChecks.hasLowercase" [class.text-slate-400]="!passwordChecks.hasLowercase">
+              <span>{{ passwordChecks.hasLowercase ? '✓' : '•' }}</span>
+              <span>1 letra minúscula (a-z)</span>
+            </li>
+            <li class="flex items-center gap-1.5" [class.text-emerald-400]="passwordChecks.hasNumber" [class.text-slate-400]="!passwordChecks.hasNumber">
+              <span>{{ passwordChecks.hasNumber ? '✓' : '•' }}</span>
+              <span>1 número (0-9)</span>
+            </li>
+            <li class="flex items-center gap-1.5 sm:col-span-2" [class.text-emerald-400]="passwordChecks.hasSpecial" [class.text-slate-400]="!passwordChecks.hasSpecial">
+              <span>{{ passwordChecks.hasSpecial ? '✓' : '•' }}</span>
+              <span>1 caractere especial (!&#64;#$%^&amp;*...)</span>
+            </li>
+          </ul>
+        </div>
+
         @if (registerForm.get("senha")?.touched && registerForm.get("senha")?.invalid) {
-          <p class="text-xs text-red-400 mt-1">A senha deve ter pelo menos 6 caracteres</p>
+          <p class="text-xs text-red-400 mt-1.5">A senha precisa atender a todos os critérios de segurança acima.</p>
         }
       </div>
 

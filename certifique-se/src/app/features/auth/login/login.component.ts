@@ -2,6 +2,7 @@ import { Component, inject } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterLink, ActivatedRoute } from "@angular/router";
 import { AuthService } from "../../../core/services/auth.service";
+import { extractApiErrorMessage } from "../../../core/utils/api-error.util";
 
 @Component({
   selector: "app-login",
@@ -48,10 +49,12 @@ export class LoginComponent {
       },
       error: (err) => {
         this.isLoading = false;
-        if (err.status === 401 || err.status === 400) {
-          this.errorMessage = "E-mail ou senha incorretos. Verifique suas credenciais.";
+        if (err.status === 404) {
+          this.errorMessage = "Não encontramos uma conta com este e-mail. Verifique o endereço ou cadastre-se gratuitamente.";
+        } else if (err.status === 401 || err.status === 400) {
+          this.errorMessage = extractApiErrorMessage(err, "E-mail ou senha incorretos. Verifique suas credenciais.");
         } else {
-          this.errorMessage = "Erro ao conectar com o servidor. Tente novamente mais tarde.";
+          this.errorMessage = extractApiErrorMessage(err, "Erro ao conectar com o servidor. Tente novamente mais tarde.");
         }
       }
     });

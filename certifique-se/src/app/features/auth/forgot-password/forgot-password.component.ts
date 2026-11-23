@@ -2,6 +2,7 @@ import { Component, inject } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { AuthService } from "../../../core/services/auth.service";
+import { extractApiErrorMessage } from "../../../core/utils/api-error.util";
 
 @Component({
   selector: "app-forgot-password",
@@ -20,6 +21,11 @@ export class ForgotPasswordComponent {
   isLoading = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
+  accountNotFound = false;
+
+  get typedEmail(): string {
+    return (this.form.get("email")?.value || "").trim().toLowerCase();
+  }
 
   onSubmit(): void {
     if (this.form.invalid) {
@@ -30,20 +36,29 @@ export class ForgotPasswordComponent {
     this.isLoading = true;
     this.successMessage = null;
     this.errorMessage = null;
+    this.accountNotFound = false;
 
-    this.authService.forgotPassword(this.form.value.email).subscribe({
+    const email = this.typedEmail;
+
+    this.authService.forgotPassword(email).subscribe({
       next: (res: any) => {
         this.isLoading = false;
         this.successMessage = res?.mensagem || "E-mail de recuperação enviado com sucesso! Verifique sua caixa de entrada.";
       },
       error: (err: any) => {
         this.isLoading = false;
-        if (err.status === 404) {
-          this.errorMessage = err.error?.detail || err.error?.mensagem || "Este e-mail não foi encontrado em nosso sistema.";
-        } else if (err.status === 0) {
-          this.errorMessage = "Falha de conexão com o servidor. Verifique sua conexão e tente novamente.";
+        const apiMsg = extractApiErrorMessage(err, "");
+        const isNotFoundByMsg = /n[aã]o encontrad|n[aã]o cadastrad|inexistente|no user|not found/i.test(apiMsg);
+
+        if (err.status === 404 || isNotFoundByMsg) {
+          this.accountNotFound = true;
+          this.errorMessage =
+            "Não encontramos nenhuma conta cadastrada com este e-mail. Para acessar a plataforma, você precisa criar uma conta primeiro.";
         } else {
-          this.errorMessage = err.error?.detail || err.error?.mensagem || "Erro ao solicitar recuperação de senha. Tente novamente.";
+          this.errorMessage = extractApiErrorMessage(
+            err,
+            "Erro ao solicitar recuperação de senha. Verifique o e-mail informado e tente novamente."
+          );
         }
       }
     });
