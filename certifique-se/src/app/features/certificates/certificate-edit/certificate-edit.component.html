@@ -73,12 +73,18 @@
             <label for="nome" class="block text-sm font-semibold text-slate-400 mb-2">Nome do Curso / Certificação *</label>
             <input id="nome" type="text" formControlName="nome"
                    class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            @if (certificateForm.get("nome")?.touched && certificateForm.get("nome")?.invalid) {
+              <p class="text-xs text-red-400 mt-1">O nome do certificado é obrigatório (máx. 150 caracteres)</p>
+            }
           </div>
 
           <div>
             <label for="empresa" class="block text-sm font-semibold text-slate-400 mb-2">Instituição Emissora *</label>
             <input id="empresa" type="text" formControlName="empresa"
                    class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            @if (certificateForm.get("empresa")?.touched && certificateForm.get("empresa")?.invalid) {
+              <p class="text-xs text-red-400 mt-1">A instituição emissora é obrigatória</p>
+            }
           </div>
 
           <div>
@@ -114,10 +120,44 @@
         </h2>
 
         <div class="space-y-5">
+          <!-- Tags com Chips Interativos -->
           <div>
-            <label for="tagsInput" class="block text-sm font-semibold text-slate-400 mb-2">Tags (separadas por vírgula) *</label>
-            <input id="tagsInput" type="text" formControlName="tagsInput"
-                   class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label for="tagInputRef" class="block text-sm font-semibold text-slate-400 mb-2">
+              Tags de Categorização *
+              <span class="text-slate-400 font-normal normal-case">(digite e pressione Enter para adicionar)</span>
+            </label>
+
+            <div class="relative">
+              <input #tagInputRef
+                     id="tagInputRef"
+                     type="text"
+                     (keydown)="onTagKeydown($event, tagInputRef)"
+                     (blur)="onTagBlur(tagInputRef)"
+                     placeholder="Digite uma tag (ex: java, spring boot) e pressione Enter..."
+                     class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+
+            <div class="flex flex-wrap gap-2 mt-3 min-h-[32px] items-center">
+              @for (tag of tags; track tag; let i = $index) {
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-blue-600/20 text-blue-300 border border-blue-500/30 transition hover:border-blue-400/50 animate-fade-in">
+                  <span>#{{ tag }}</span>
+                  <button type="button" (click)="removeTag(i)" class="text-blue-400 hover:text-white transition-colors ml-0.5 p-0.5 rounded-md hover:bg-blue-500/30" title="Remover tag">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 6 6 18M6 6l12 12"/>
+                    </svg>
+                  </button>
+                </span>
+              } @empty {
+                <span class="text-xs text-slate-600 italic">Nenhuma tag adicionada ainda. Digite acima e aperte Enter.</span>
+              }
+            </div>
+
+            @if (certificateForm.get("tagsInput")?.touched && tags.length === 0) {
+              <p class="text-xs text-red-400 mt-2 flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Adicione pelo menos uma tag de categorização.
+              </p>
+            }
           </div>
 
           <div>
@@ -145,11 +185,22 @@
 
         <div class="space-y-4">
           <div>
-            <label class="block text-sm font-semibold text-slate-400 mb-2">URL da Imagem *</label>
-            <input type="text" formControlName="foto" (input)="onFotoUrlChange()"
-                   class="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3" />
-            <input type="file" (change)="onFileSelected($event)" accept="image/png, image/jpeg, image/webp, application/pdf"
-                   class="text-xs text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-slate-800 file:text-slate-200 cursor-pointer" />
+            <label class="block text-sm font-semibold text-slate-400 mb-2">Substituir arquivo do certificado</label>
+            <div class="relative border-2 border-dashed border-slate-700/80 hover:border-blue-500/60 rounded-2xl p-6 transition text-center bg-slate-950/40">
+              <input type="file" (change)="onFileSelected($event)" accept="image/png, image/jpeg, image/webp, application/pdf"
+                     class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+              <div class="flex flex-col items-center justify-center pointer-events-none">
+                <div class="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center mb-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                  </svg>
+                </div>
+                <p class="text-sm font-semibold text-white">Clique para enviar um novo arquivo ou arraste aqui</p>
+                <p class="text-xs text-slate-400 mt-1">Formatos suportados: PNG, JPG, WebP ou PDF (até 5 MB)</p>
+              </div>
+            </div>
 
             @if (isUploadingImage) {
               <p class="text-xs text-blue-400 mt-2 flex items-center gap-1.5 animate-pulse">
@@ -164,6 +215,15 @@
             @if (imageUploadError) {
               <p class="text-xs text-red-400 mt-2">{{ imageUploadError }}</p>
             }
+
+            <div class="mt-4 pt-1">
+              <label for="foto" class="block text-sm font-semibold text-slate-400 mb-1.5">URL do Comprovante *</label>
+              <input id="foto" type="text" formControlName="foto" (input)="onFotoUrlChange()"
+                     class="w-full px-4 py-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-xs focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              @if (certificateForm.get("foto")?.touched && certificateForm.get("foto")?.invalid) {
+                <p class="text-xs text-red-400 mt-1">O arquivo ou URL da imagem do certificado é obrigatório</p>
+              }
+            </div>
           </div>
 
           <!-- Image/PDF Preview -->

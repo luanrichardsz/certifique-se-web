@@ -7,11 +7,13 @@ import { Certificate } from "../../core/models/certificate.model";
 import { StatsCardComponent } from "../../shared/components/stats-card/stats-card.component";
 import { CertificateCardComponent } from "../../shared/components/certificate-card/certificate-card.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
+import { ModalComponent } from "../../shared/components/modal/modal.component";
+import { extractApiErrorMessage } from "../../core/utils/api-error.util";
 
 @Component({
   selector: "app-dashboard",
   standalone: true,
-  imports: [RouterLink, StatsCardComponent, CertificateCardComponent, EmptyStateComponent],
+  imports: [RouterLink, StatsCardComponent, CertificateCardComponent, EmptyStateComponent, ModalComponent],
   templateUrl: "./dashboard.component.html",
   styleUrl: "./dashboard.component.css"
 })
@@ -30,7 +32,13 @@ export class DashboardComponent implements OnInit {
   currentUser = this.authService.currentUser;
   certificates: Certificate[] = [];
   isLoading = true;
+  loadError: string | null = null;
   copied = false;
+
+  // Delete Modal State
+  certToDelete: Certificate | null = null;
+  isDeleting = false;
+  deleteError: string | null = null;
 
   get totalCertificates(): number {
     return this.certificates.length;
@@ -78,13 +86,15 @@ export class DashboardComponent implements OnInit {
 
   loadCertificates(): void {
     this.isLoading = true;
+    this.loadError = null;
     this.certificateService.getMyCertificates().subscribe({
       next: (data) => {
         this.certificates = data;
         this.isLoading = false;
       },
-      error: () => {
+      error: (err) => {
         this.isLoading = false;
+        this.loadError = extractApiErrorMessage(err, "Não foi possível carregar seus certificados.");
       }
     });
   }
@@ -96,12 +106,32 @@ export class DashboardComponent implements OnInit {
   }
 
   onDelete(cert: Certificate): void {
-    if (confirm(`Tem certeza que deseja excluir o certificado "${cert.nome}"?`)) {
-      this.certificateService.deleteCertificate(cert.hashCertificado).subscribe({
-        next: () => {
-          this.certificates = this.certificates.filter((c) => c.hashCertificado !== cert.hashCertificado);
-        }
-      });
-    }
+    this.certToDelete = cert;
+    this.deleteError = null;
+  }
+
+  closeDeleteModal(): void {
+    if (this.isDeleting) return;
+    this.certToDelete = null;
+    this.deleteError = null;
+  }
+
+  confirmDelete(): void {
+    if (!this.certToDelete || this.isDeleting) return;
+    const target = this.certToDelete;
+    this.isDeleting = true;
+    this.deleteError = null;
+
+    this.certificateService.deleteCertificate(target.hashCertificado).subscribe({
+      next: () => {
+        this.isDeleting = false;
+        this.certificates = this.certificates.filter((c) => c.hashCertificado !== target.hashCertificado);
+        this.certToDelete = null;
+      },
+      error: (err) => {
+        this.isDeleting = false;
+        this.deleteError = extractApiErrorMessage(err, "Erro ao excluir o certificado. Tente novamente.");
+      }
+    });
   }
 }

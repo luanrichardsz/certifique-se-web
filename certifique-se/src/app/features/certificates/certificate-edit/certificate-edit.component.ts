@@ -4,8 +4,8 @@ import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { CertificateService } from "../../../core/services/certificate.service";
 import { PdfThumbnailService } from "../../../core/services/pdf-thumbnail.service";
 import { Certificate, CertificateUpdateDTO } from "../../../core/models/certificate.model";
-
 import { CommonModule } from "@angular/common";
+import { extractApiErrorMessage } from "../../../core/utils/api-error.util";
 
 function pastOrPresentDateValidator(control: AbstractControl): ValidationErrors | null {
   if (!control.value) return null;
@@ -37,6 +37,7 @@ export class CertificateEditComponent implements OnInit {
 
   hashCertificado = "";
   certificate: Certificate | null = null;
+  tags: string[] = [];
   isLoading = true;
   isSaving = false;
   isUploadingImage = false;
@@ -61,7 +62,7 @@ export class CertificateEditComponent implements OnInit {
       return !!(nome?.valid && empresa?.valid && data?.valid);
     }
     if (this.mobileStep === 2) {
-      return !!this.certificateForm.get("tagsInput")?.valid;
+      return this.tags.length > 0;
     }
     return true;
   }
@@ -94,7 +95,6 @@ export class CertificateEditComponent implements OnInit {
     }
   }
 
-
   certificateForm: FormGroup = this.fb.group({
     nome: ["", [Validators.required, Validators.maxLength(150)]],
     empresa: ["", [Validators.required, Validators.maxLength(150)]],
@@ -112,6 +112,57 @@ export class CertificateEditComponent implements OnInit {
     this.loadCertificate();
   }
 
+  // Gerenciamento de Tags com Chips Interativos
+  onTagKeydown(event: KeyboardEvent, inputEl: HTMLInputElement): void {
+    if (event.key === "Enter" || event.key === ",") {
+      event.preventDefault();
+      this.addTagsFromInput(inputEl);
+      return;
+    }
+
+    if (event.key === "Backspace" && inputEl.value === "" && this.tags.length > 0) {
+      this.removeTag(this.tags.length - 1);
+    }
+  }
+
+  onTagBlur(inputEl: HTMLInputElement): void {
+    this.addTagsFromInput(inputEl);
+  }
+
+  addTagsFromInput(inputEl: HTMLInputElement): void {
+    const raw = inputEl.value;
+    if (!raw || !raw.trim()) return;
+
+    const parts = raw
+      .split(",")
+      .map(p => p.trim().toLowerCase())
+      .filter(p => p.length > 0);
+
+    for (const part of parts) {
+      if (!this.tags.includes(part)) {
+        this.tags.push(part);
+      }
+    }
+
+    inputEl.value = "";
+    this.syncTagsInputControl();
+  }
+
+  removeTag(index: number): void {
+    if (index >= 0 && index < this.tags.length) {
+      this.tags.splice(index, 1);
+      this.syncTagsInputControl();
+    }
+  }
+
+  private syncTagsInputControl(): void {
+    this.certificateForm.patchValue({
+      tagsInput: this.tags.join(", ")
+    });
+    this.certificateForm.get("tagsInput")?.markAsDirty();
+    this.certificateForm.get("tagsInput")?.markAsTouched();
+  }
+
   loadCertificate(): void {
     this.isLoading = true;
     this.certificateService.getMyCertificates().subscribe({
@@ -119,6 +170,9 @@ export class CertificateEditComponent implements OnInit {
         const found = list.find((c) => c.hashCertificado === this.hashCertificado);
         if (found) {
           this.certificate = found;
+          this.tags = (found.tags || [])
+            .map((t) => t.trim().toLowerCase())
+            .filter((t) => t.length > 0);
           const resolved = this.certificateService.resolveImageUrl(found.foto);
           this.certificateForm.patchValue({
             nome: found.nome,
@@ -128,7 +182,7 @@ export class CertificateEditComponent implements OnInit {
             linkValidacao: found.linkValidacao || "",
             foto: found.foto,
             descricao: found.descricao || "",
-            tagsInput: found.tags.join(", "),
+            tagsInput: this.tags.join(", "),
             publico: found.publico
           });
 
@@ -144,9 +198,9 @@ export class CertificateEditComponent implements OnInit {
         }
         this.isLoading = false;
       },
-      error: () => {
+      error: (err) => {
         this.isLoading = false;
-        this.errorMessage = "Erro ao carregar dados do certificado.";
+        this.errorMessage = extractApiErrorMessage(err, "Erro ao carregar dados do certificado.");
       }
     });
   }
@@ -206,15 +260,21 @@ export class CertificateEditComponent implements OnInit {
         error: (err) => {
           this.isUploadingImage = false;
           console.error("Erro ao fazer upload do arquivo no Cloudflare R2:", err);
-          this.imageUploadError = err.error?.detail || err.error?.mensagem || "Falha ao enviar arquivo. Formatos suportados: PNG, JPEG, WebP ou PDF (máx 5MB).";
+          this.imageUploadError = extractApiErrorMessage(
+            err,
+            "Falha ao enviar arquivo. Formatos suportados: PNG, JPEG, WebP ou PDF (máx 5MB)."
+          );
         }
       });
     }
   }
 
   onSubmit(): void {
-    if (this.certificateForm.invalid) {
+    if (this.certificateForm.invalid || this.tags.length === 0) {
       this.certificateForm.markAllAsTouched();
+      if (this.tags.length === 0) {
+        this.errorMessage = "Informe pelo menos uma tag para categorizar o certificado.";
+      }
       return;
     }
 
@@ -222,23 +282,13 @@ export class CertificateEditComponent implements OnInit {
     this.errorMessage = null;
 
     const raw = this.certificateForm.value;
-    const tags = raw.tagsInput
-      .split(",")
-      .map((t: string) => t.trim().toLowerCase())
-      .filter((t: string) => t.length > 0);
-
-    if (tags.length === 0) {
-      this.errorMessage = "Informe pelo menos uma tag.";
-      this.isSaving = false;
-      return;
-    }
 
     const payload: CertificateUpdateDTO = {
       nome: raw.nome.trim(),
       empresa: raw.empresa.trim(),
       dataConclusao: raw.dataConclusao,
       foto: raw.foto.trim(),
-      tags: tags,
+      tags: this.tags,
       cargaHoraria: raw.cargaHoraria ? Number(raw.cargaHoraria) : null,
       descricao: raw.descricao ? raw.descricao.trim() : null,
       linkValidacao: raw.linkValidacao ? raw.linkValidacao.trim() : null,
@@ -254,13 +304,9 @@ export class CertificateEditComponent implements OnInit {
         this.isSaving = false;
         console.error("Erro ao atualizar certificado:", err);
         if (err.status === 409) {
-          this.errorMessage = err.error?.detail || err.error?.mensagem || "Já existe um certificado com estes dados.";
-        } else if (err.error?.detail) {
-          this.errorMessage = err.error.detail;
-        } else if (err.error?.mensagem) {
-          this.errorMessage = err.error.mensagem;
+          this.errorMessage = extractApiErrorMessage(err, "Já existe um certificado com estes dados.");
         } else {
-          this.errorMessage = "Erro ao atualizar certificado. Verifique os campos.";
+          this.errorMessage = extractApiErrorMessage(err, "Erro ao atualizar certificado. Verifique os campos.");
         }
       }
     });
