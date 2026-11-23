@@ -192,12 +192,18 @@
             <label for="nomeUsuario" class="block text-sm font-semibold text-slate-400 mb-1.5">Nome Completo *</label>
             <input id="nomeUsuario" type="text" formControlName="nomeUsuario"
                    class="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            @if (profileForm.get("nomeUsuario")?.touched && profileForm.get("nomeUsuario")?.invalid) {
+              <p class="text-xs text-red-400 mt-1">O nome completo é obrigatório (máx. 100 caracteres).</p>
+            }
           </div>
 
           <div>
             <label for="email" class="block text-sm font-semibold text-slate-400 mb-1.5">E-mail *</label>
             <input id="email" type="email" formControlName="email"
                    class="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            @if (profileForm.get("email")?.touched && profileForm.get("email")?.invalid) {
+              <p class="text-xs text-red-400 mt-1">Informe um endereço de e-mail válido.</p>
+            }
           </div>
 
           <div>
@@ -207,18 +213,27 @@
               <input id="username" type="text" formControlName="username"
                      class="w-full pl-9 pr-4 py-2.5 sm:py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-xs sm:text-sm tabular-nums focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
+            @if (profileForm.get("username")?.touched && profileForm.get("username")?.invalid) {
+              <p class="text-xs text-red-400 mt-1">Username inválido (mín. 3 caracteres, apenas letras, números, ponto, hífen ou underline).</p>
+            }
           </div>
 
           <div>
             <label for="headline" class="block text-sm font-semibold text-slate-400 mb-1.5">Título / Cargo Profissional</label>
             <input id="headline" type="text" formControlName="headline" placeholder="ex: Desenvolvedor Full Stack"
                    class="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            @if (profileForm.get("headline")?.touched && profileForm.get("headline")?.invalid) {
+              <p class="text-xs text-red-400 mt-1">Máximo de 150 caracteres.</p>
+            }
           </div>
 
           <div class="sm:col-span-2">
             <label for="biografia" class="block text-sm font-semibold text-slate-400 mb-1.5">Biografia / Apresentação</label>
             <textarea id="biografia" formControlName="biografia" rows="3" placeholder="Fale um pouco sobre sua trajetória, formação e objetivos..."
                       class="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+            @if (profileForm.get("biografia")?.touched && profileForm.get("biografia")?.invalid) {
+              <p class="text-xs text-red-400 mt-1">A biografia deve ter no máximo 500 caracteres.</p>
+            }
           </div>
         </div>
 
@@ -302,10 +317,10 @@
           <div>
             <div class="flex items-center justify-between mb-1.5">
               <label for="novaSenha" class="block text-sm font-semibold text-slate-400">Nova Senha</label>
-              <span class="text-xs text-slate-400 font-medium">Mínimo de 6 caracteres</span>
+              <span class="text-xs text-slate-400 font-medium">Mínimo de 8 caracteres</span>
             </div>
             <div class="relative">
-              <input id="novaSenha" [type]="showNovaSenha ? 'text' : 'password'" formControlName="novaSenha" placeholder="Mínimo de 6 caracteres"
+              <input id="novaSenha" [type]="showNovaSenha ? 'text' : 'password'" formControlName="novaSenha" placeholder="Mínimo de 8 caracteres"
                      class="w-full pl-4 pr-11 py-2.5 sm:py-3 rounded-xl bg-slate-950/80 border border-slate-800 text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               <button type="button"
                       (click)="showNovaSenha = !showNovaSenha"
@@ -327,7 +342,7 @@
               </button>
             </div>
             @if (passwordForm.get('novaSenha')?.touched && passwordForm.get('novaSenha')?.invalid) {
-              <p class="text-xs text-red-400 mt-1.5">A senha deve ter pelo menos 6 caracteres</p>
+              <p class="text-xs text-red-400 mt-1.5">A nova senha precisa atender a todos os requisitos abaixo.</p>
             }
           </div>
 
@@ -363,6 +378,42 @@
               }
             }
           </div>
+        </div>
+
+        <!-- Checklist de requisitos da nova senha -->
+        <div class="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-2">
+          <div class="flex gap-1.5">
+            @for (step of [1, 2, 3, 4, 5]; track step) {
+              <div class="h-1 flex-1 rounded-full transition-colors duration-200"
+                   [class.bg-emerald-500]="passwordChecks.passedCount >= step && passwordChecks.passedCount === 5"
+                   [class.bg-blue-500]="passwordChecks.passedCount >= step && passwordChecks.passedCount >= 3 && passwordChecks.passedCount < 5"
+                   [class.bg-amber-500]="passwordChecks.passedCount >= step && passwordChecks.passedCount < 3"
+                   [class.bg-slate-800]="passwordChecks.passedCount < step">
+              </div>
+            }
+          </div>
+          <ul class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 text-xs">
+            <li class="flex items-center gap-1.5" [class.text-emerald-400]="passwordChecks.minLength" [class.text-slate-400]="!passwordChecks.minLength">
+              <span>{{ passwordChecks.minLength ? '✓' : '•' }}</span>
+              <span>Mínimo de 8 caracteres</span>
+            </li>
+            <li class="flex items-center gap-1.5" [class.text-emerald-400]="passwordChecks.hasUppercase" [class.text-slate-400]="!passwordChecks.hasUppercase">
+              <span>{{ passwordChecks.hasUppercase ? '✓' : '•' }}</span>
+              <span>1 letra maiúscula (A-Z)</span>
+            </li>
+            <li class="flex items-center gap-1.5" [class.text-emerald-400]="passwordChecks.hasLowercase" [class.text-slate-400]="!passwordChecks.hasLowercase">
+              <span>{{ passwordChecks.hasLowercase ? '✓' : '•' }}</span>
+              <span>1 letra minúscula (a-z)</span>
+            </li>
+            <li class="flex items-center gap-1.5" [class.text-emerald-400]="passwordChecks.hasNumber" [class.text-slate-400]="!passwordChecks.hasNumber">
+              <span>{{ passwordChecks.hasNumber ? '✓' : '•' }}</span>
+              <span>1 número (0-9)</span>
+            </li>
+            <li class="flex items-center gap-1.5 sm:col-span-2" [class.text-emerald-400]="passwordChecks.hasSpecial" [class.text-slate-400]="!passwordChecks.hasSpecial">
+              <span>{{ passwordChecks.hasSpecial ? '✓' : '•' }}</span>
+              <span>1 caractere especial (!&#64;#$%^&amp;*...)</span>
+            </li>
+          </ul>
         </div>
 
         <div class="flex justify-end pt-2">
@@ -433,3 +484,22 @@
 </div>
 
 <app-image-cropper-modal [isOpen]="showCropperModal" [imageSource]="cropImageSource" (cropped)="onCropConfirmed($event)" (cancelled)="onCropCancelled()"></app-image-cropper-modal>
+
+<app-modal [isOpen]="showRemovePhotoModal" title="Remover Foto de Perfil" (close)="closeRemovePhotoModal()">
+  <div class="space-y-4">
+    <p class="text-sm text-slate-300 leading-relaxed">
+      Deseja realmente remover sua foto de perfil? Seu perfil voltará a exibir as iniciais do seu nome.
+    </p>
+
+    <div class="flex items-center justify-end gap-3 pt-2">
+      <button type="button" (click)="closeRemovePhotoModal()" [disabled]="isUploadingPhoto"
+              class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition disabled:opacity-50">
+        Cancelar
+      </button>
+      <button type="button" (click)="confirmRemovePhoto()" [disabled]="isUploadingPhoto"
+              class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-500 transition disabled:opacity-50">
+        {{ isUploadingPhoto ? "Removendo..." : "Sim, remover foto" }}
+      </button>
+    </div>
+  </div>
+</app-modal>

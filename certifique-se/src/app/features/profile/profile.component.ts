@@ -6,11 +6,18 @@ import { UserService } from "../../core/services/user.service";
 import { User, UserUpdateDTO, ChangePasswordDTO } from "../../core/models/user.model";
 import { CommonModule } from "@angular/common";
 import { ImageCropperModalComponent } from "../../shared/components/image-cropper-modal/image-cropper-modal.component";
+import { ModalComponent } from "../../shared/components/modal/modal.component";
+import {
+  evaluatePasswordRequirements,
+  PasswordRequirementChecks,
+  strongPasswordValidator
+} from "../../shared/validators/password.validator";
+import { extractApiErrorMessage } from "../../core/utils/api-error.util";
 
 @Component({
   selector: "app-profile",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, ImageCropperModalComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, ImageCropperModalComponent, ModalComponent],
   templateUrl: "./profile.component.html",
   styleUrl: "./profile.component.css"
 })
@@ -34,7 +41,7 @@ export class ProfileComponent implements OnInit {
 
   passwordForm: FormGroup = this.fb.group({
     senhaAtual: ["", [Validators.required]],
-    novaSenha: ["", [Validators.required, Validators.minLength(6), Validators.maxLength(100)]],
+    novaSenha: ["", [Validators.required, strongPasswordValidator(), Validators.maxLength(100)]],
     confirmarSenha: ["", [Validators.required]]
   });
 
@@ -47,6 +54,7 @@ export class ProfileComponent implements OnInit {
   profileError: string | null = null;
 
   isUploadingPhoto = false;
+  showRemovePhotoModal = false;
   photoSuccess: string | null = null;
   photoError: string | null = null;
   avatarImageError = false;
@@ -68,6 +76,10 @@ export class ProfileComponent implements OnInit {
   showDeleteConfirm = false;
 
   copied = false;
+
+  get passwordChecks(): PasswordRequirementChecks {
+    return evaluatePasswordRequirements(this.passwordForm.get("novaSenha")?.value);
+  }
 
   get publicProfileUrl(): string {
     const username = this.currentUser()?.username;
@@ -156,7 +168,7 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         this.isUploadingPhoto = false;
-        this.photoError = err.error?.mensagem || "Erro ao enviar foto. Tente novamente.";
+        this.photoError = extractApiErrorMessage(err, "Erro ao enviar foto. Tente novamente.");
       }
     });
   }
@@ -167,8 +179,15 @@ export class ProfileComponent implements OnInit {
   }
 
   onRemovePhoto(): void {
-    if (!confirm("Deseja realmente remover sua foto de perfil?")) return;
+    this.showRemovePhotoModal = true;
+  }
 
+  closeRemovePhotoModal(): void {
+    if (this.isUploadingPhoto) return;
+    this.showRemovePhotoModal = false;
+  }
+
+  confirmRemovePhoto(): void {
     this.isUploadingPhoto = true;
     this.photoError = null;
     this.photoSuccess = null;
@@ -176,13 +195,15 @@ export class ProfileComponent implements OnInit {
     this.userService.deleteAvatar().subscribe({
       next: (updatedUser) => {
         this.isUploadingPhoto = false;
+        this.showRemovePhotoModal = false;
         this.authService.setCurrentUser(updatedUser);
         this.photoSuccess = "Foto de perfil removida com sucesso!";
         setTimeout(() => (this.photoSuccess = null), 4000);
       },
       error: (err) => {
         this.isUploadingPhoto = false;
-        this.photoError = err.error?.mensagem || "Erro ao remover foto.";
+        this.showRemovePhotoModal = false;
+        this.photoError = extractApiErrorMessage(err, "Erro ao remover foto.");
       }
     });
   }
@@ -207,7 +228,7 @@ export class ProfileComponent implements OnInit {
     const dto: UserUpdateDTO = {
       nomeUsuario: val.nomeUsuario.trim(),
       email: val.email.trim(),
-      username: val.username ? val.username.trim() : undefined,
+      username: val.username ? val.username.trim().toLowerCase() : undefined,
       headline: val.headline ? val.headline.trim() : undefined,
       biografia: val.biografia ? val.biografia.trim() : undefined,
       perfilPublico: val.perfilPublico
@@ -222,7 +243,7 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         this.isSavingProfile = false;
-        this.profileError = err.error?.mensagem || "Erro ao atualizar perfil. Verifique os dados.";
+        this.profileError = extractApiErrorMessage(err, "Erro ao atualizar perfil. Verifique os dados.");
       }
     });
   }
@@ -233,12 +254,12 @@ export class ProfileComponent implements OnInit {
 
     if (this.passwordForm.invalid) {
       this.passwordForm.markAllAsTouched();
-      if (this.passwordForm.get("novaSenha")?.hasError("minlength")) {
-        this.passwordError = "A nova senha deve ter pelo menos 6 caracteres.";
+      if (this.passwordForm.get("senhaAtual")?.invalid) {
+        this.passwordError = "Por favor, informe sua senha atual.";
       } else if (this.passwordForm.get("novaSenha")?.hasError("required")) {
         this.passwordError = "Por favor, preencha a nova senha.";
-      } else if (this.passwordForm.get("senhaAtual")?.invalid) {
-        this.passwordError = "Por favor, informe sua senha atual.";
+      } else if (this.passwordForm.get("novaSenha")?.invalid) {
+        this.passwordError = "A nova senha precisa atender a todos os requisitos de segurança (mín. 8 caracteres, maiúscula, minúscula, número e caractere especial).";
       } else if (this.passwordForm.get("confirmarSenha")?.invalid) {
         this.passwordError = "Por favor, confirme a nova senha.";
       } else {
@@ -267,7 +288,7 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         this.isChangingPassword = false;
-        this.passwordError = err.error?.mensagem || "Senha atual incorreta.";
+        this.passwordError = extractApiErrorMessage(err, "Senha atual incorreta.");
       }
     });
   }
@@ -287,7 +308,7 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         this.isDeletingAccount = false;
-        this.deleteError = err.error?.mensagem || "Senha incorreta. Não foi possível excluir a conta.";
+        this.deleteError = extractApiErrorMessage(err, "Senha incorreta. Não foi possível excluir a conta.");
       }
     });
   }
