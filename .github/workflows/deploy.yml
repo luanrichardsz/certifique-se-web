@@ -3,6 +3,8 @@ name: Deploy Angular to GitHub Pages
 on:
   push:
     branches: [ master, main ]
+    paths-ignore:
+      - '**.md'
   workflow_dispatch:
 
 permissions:
@@ -15,10 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -51,6 +50,13 @@ jobs:
         with:
           path: certifique-se/dist/certifique-se/browser
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy para o GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
